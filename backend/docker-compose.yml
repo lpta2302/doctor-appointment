@@ -1,0 +1,55 @@
+services:
+  postgres:
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    networks:
+      - app_net
+  
+  config-server:
+    build: ./config-server
+    container_name: config-server
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 2s
+      retries: 5
+      start_period: 2s
+    ports:
+      - 8888:8888
+    networks:
+      - app_net
+  discovery-server:
+    build: ./discovery-server
+    container_name: discovery-server
+    environment:
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+    depends_on:
+      config-server:
+        condition: service_healthy
+    ports:
+      - 8761:8761
+    networks:
+      - app_net
+  gateway:
+    build: ./gateway
+    container_name: gateway
+    depends_on:
+      config-server:
+        condition: service_healthy
+    ports:
+      - 8222:8222
+    networks:
+      - app_net
+
+volumes:
+  postgres:
+
+networks:
+  app_net:
+    driver: bridge
