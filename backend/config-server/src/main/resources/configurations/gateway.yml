@@ -1,7 +1,17 @@
-eureka:
-  client:
-    register-with-eureka: false
-    fetch-registry: false
+spring:
+  cloud:
+    gateway:
+      discovery:
+          locator:
+            enabled: true
+      routes:
+        - id: doctor-service
+          uri: lb://DOCTOR-SERVICE
+          predicates:
+            - Path=/api/v1/specializations/**
+            - Path=/api/v1/doctors/**
+            - Path=/api/v1/admin/doctors/**
+            - Path=/api/v1/admin/specializations/**
 
 server:
   port: 8222

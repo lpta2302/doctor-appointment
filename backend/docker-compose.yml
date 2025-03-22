@@ -1,55 +1,80 @@
 services:
   postgres:
     image: postgres:latest
+    container_name: postgres
     restart: unless-stopped
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_USERNAME=postgres
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=doctor_db
     volumes:
       - postgres:/var/lib/postgresql/data
     networks:
       - app_net
-  
-  config-server:
-    build: ./config-server
-    container_name: config-server
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
-      interval: 2s
-      retries: 5
-      start_period: 2s
-    ports:
-      - 8888:8888
-    networks:
-      - app_net
-  discovery-server:
-    build: ./discovery-server
-    container_name: discovery-server
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: unless-stopped
     environment:
-      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
-    depends_on:
-      config-server:
-        condition: service_healthy
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}  
     ports:
-      - 8761:8761
+      - "5050:80" 
+    depends_on:
+      - postgres
     networks:
       - app_net
-  gateway:
-    build: ./gateway
-    container_name: gateway
-    depends_on:
-      config-server:
-        condition: service_healthy
-    ports:
-      - 8222:8222
-    networks:
-      - app_net
+  # config-server:
+  #   build: ./config-server
+  #   container_name: config-server
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+  #     interval: 2s
+  #     retries: 5
+  #     start_period: 2s
+  #   ports:
+  #     - 8888:8888
+  #   networks:
+  #     - app_net
+  # discovery-server:
+  #   build: ./discovery-server
+  #   container_name: discovery-server
+  #   environment:
+  #     - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+  #   depends_on:
+  #     config-server:
+  #       condition: service_healthy
+  #   ports:
+  #     - 8761:8761
+  #   networks:
+  #     - app_net
+  # doctor-service:
+  #   build: ./doctor-service
+  #   container_name: doctor-service
+  #   depends_on:
+  #     config-server:
+  #       condition: service_healthy
+  #   ports:
+  #     - 8070:8070
+  #   networks:
+  # #     - app_net
+  # gateway:
+  #   build: ./gateway
+  #   container_name: gateway
+  #   depends_on:
+  #     config-server:
+  #       condition: service_healthy
+  #   ports:
+  #     - 8222:8222
+  #   networks:
+  #     - app_net
 
 volumes:
   postgres:
 
 networks:
   app_net:
+    name: app_net
     driver: bridge
