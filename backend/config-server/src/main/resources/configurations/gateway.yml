@@ -5,13 +5,27 @@ spring:
           locator:
             enabled: true
       routes:
-        - id: doctor-service
+        - id: specialization-service
           uri: lb://DOCTOR-SERVICE
           predicates:
             - Path=/api/v1/specializations/**
+        - id: doctor-service
+          uri: lb://DOCTOR-SERVICE
+          predicates:
             - Path=/api/v1/doctors/**
+        - id: admin-doctor-service
+          uri: lb://DOCTOR-SERVICE
+          predicates:
             - Path=/api/v1/admin/doctors/**
+        - id: admin-specialization-service
+          uri: lb://DOCTOR-SERVICE
+          predicates:
             - Path=/api/v1/admin/specializations/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka}
 
 server:
   port: 8222

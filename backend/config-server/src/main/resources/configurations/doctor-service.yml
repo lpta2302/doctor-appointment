@@ -7,9 +7,14 @@ spring:
   datasource:
     username: postgres
     password: postgres
-    url: jdbc:postgresql://localhost:5432/doctor_db
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/doctor_db}
   jpa:
     database: postgresql
     hibernate:
       ddl-auto: update
     show-sql: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka}
