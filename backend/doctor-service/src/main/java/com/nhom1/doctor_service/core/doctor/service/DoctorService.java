@@ -1,8 +1,10 @@
 package com.nhom1.doctor_service.core.doctor.service;
 
 import java.util.List;
+import java.util.Map;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.nhom1.doctor_service.common.PageResponse;
@@ -11,6 +13,7 @@ import com.nhom1.doctor_service.core.doctor.dto.DoctorResponse;
 import com.nhom1.doctor_service.core.doctor.entity.Doctor;
 import com.nhom1.doctor_service.core.doctor.mapper.DoctorMapper;
 import com.nhom1.doctor_service.core.doctor.repository.DoctorRepository;
+import com.nhom1.doctor_service.core.doctor.specification.DoctorSpecifications;
 import com.nhom1.doctor_service.core.specialization.entity.Specialization;
 import com.nhom1.doctor_service.core.specialization.service.SpecializationService;
 
@@ -29,7 +32,7 @@ public class DoctorService {
         Doctor doctor = doctorMapper.convertDoctorFrom(doctorRequest);
         
         List<Specialization> specializations = 
-            specializationService.findAllByIds(doctorRequest.specializationIds());
+            specializationService.findAllById(doctorRequest.specializationIds());
         doctor.setSpecializations(specializations);
 
         return doctorRepository.save(doctor).getId();
@@ -37,9 +40,11 @@ public class DoctorService {
 
     public Long update(Long doctorId ,DoctorRequest doctorRequest){
         Doctor doctor = findById(doctorId);
+
+        doctorMapper.copyDoctorFrom(doctor, doctorRequest);
         
         List<Specialization> specializations = 
-            specializationService.findAllByIds(doctorRequest.specializationIds());
+            specializationService.findAllById(doctorRequest.specializationIds());
         doctor.setSpecializations(specializations);
 
         return doctorRepository.save(doctor).getId();
@@ -65,17 +70,19 @@ public class DoctorService {
                 .toList());
     }
 
-    public PageResponse<DoctorResponse> findByNameOrCode(String code, String name, Pageable pageable) {
-        Page<Doctor> pageResult = doctorRepository.findByCodeOrName(code,"%" + name.toLowerCase() + "%", pageable);
+    public PageResponse<DoctorResponse> search(Map<String, String> params, Pageable pageable){
+        Specification<Doctor> spec = DoctorSpecifications.createSearchSpecification(params);
+        Page<Doctor> pageResult = doctorRepository.findAll(spec, pageable);
+        
         return PageResponse.fromPage(
-            pageResult,
+            pageResult, 
             pageResult
                 .getContent()
                 .stream()
                 .map(doctorMapper::convertDoctorResponseFrom)
                 .toList());
     }
-    
+
     public void deleteById(Long doctorId) {
         doctorRepository.deleteById(doctorId);
     }

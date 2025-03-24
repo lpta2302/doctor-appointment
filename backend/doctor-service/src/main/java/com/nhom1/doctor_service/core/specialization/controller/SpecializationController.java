@@ -1,5 +1,6 @@
 package com.nhom1.doctor_service.core.specialization.controller;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -27,18 +28,21 @@ public class SpecializationController {
 
     @GetMapping
     public ResponseEntity<PageResponse<Specialization>> findAll(
+        @ParameterObject
         @PageableDefault(page=0, size=15)
         Pageable pageable) {
         return ResponseEntity.ok(specializationService.findAll(pageable));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<PageResponse<Specialization>> findAll(
+    public ResponseEntity<PageResponse<Specialization>> search(
+        @ParameterObject
         @PageableDefault(page=0, size=15)
         Pageable pageable,
-        @RequestParam(required = false) String code,
-        @RequestParam(required = false) String name) {
-        return ResponseEntity.ok(specializationService.findByNameOrCode(code, name, pageable));
+        @RequestParam(required = false) String name,
+        @RequestParam(required = false) String code
+        ) {            
+        return ResponseEntity.ok(specializationService.findAllByCodeOrNameLike(code, name, pageable));
     }
 
     @GetMapping("/{specializationId}")

@@ -1,11 +1,14 @@
 package com.nhom1.doctor_service.core.specialization.service;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import com.nhom1.doctor_service.common.PageResponse;
 import com.nhom1.doctor_service.core.specialization.entity.Specialization;
 import com.nhom1.doctor_service.core.specialization.repository.SpecializationRepository;
+import com.nhom1.doctor_service.core.specialization.specification.SpecializationSpecifications;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -22,8 +25,10 @@ public class SpecializationService {
     public Long update(Long specializationId ,Specialization specialization){
         Specialization foundSpecialization = findById(specializationId);
 
+        if (!foundSpecialization.getCode().equals(specialization.getCode())) {
+            foundSpecialization.setCode(specialization.getCode());
+        }
         foundSpecialization.setName(specialization.getName());
-        foundSpecialization.setCode(specialization.getCode());
         foundSpecialization.setPrice(specialization.getPrice());
 
         return specializationRepository.save(specialization).getId();
@@ -35,7 +40,7 @@ public class SpecializationService {
                 "Not found specialization with id: "+id));
     }
 
-    public List<Specialization> findAllByIds(List<Long> ids){
+    public List<Specialization> findAllById(List<Long> ids){
         return specializationRepository.findAllById(ids);
     }
 
@@ -45,22 +50,21 @@ public class SpecializationService {
         );
     }
 
-    public PageResponse<Specialization> findByNameOrCode(String code, String name, Pageable pageable){
-        if (code == null && name == null) {
-            throw new IllegalArgumentException("name and code can't be null");
-        }
-        
-        return PageResponse.fromPage(
-            specializationRepository.findAllByCodeOrNameContaining(code, name.toLowerCase(), pageable)
-        );
-    }
-
     public void deleteById(Long specializationId) {
         specializationRepository.deleteById(specializationId);
     }
 
     public void deleteAllById(List<Long> specializationIds) {
         specializationRepository.deleteAllById(specializationIds);
+    }
+
+    public PageResponse<Specialization> findAllByCodeOrNameLike(String code, String name, Pageable pageable) {
+        Specification<Specialization> specification = 
+            SpecializationSpecifications.haveCodeEqual(code)
+                .or(SpecializationSpecifications.haveNameLike(name));
+        
+        Page<Specialization> pageResult = specializationRepository.findAll(specification, pageable); 
+        return PageResponse.fromPage(pageResult);
     }
 
 }

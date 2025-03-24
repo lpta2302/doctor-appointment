@@ -42,6 +42,16 @@
             "projectName": "gateway",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ClinicServiceApplication<clinic-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.nhom1.clinic_service.ClinicServiceApplication",
+            "projectName": "clinic-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

@@ -46,17 +46,17 @@ public class DoctorSpecifications {
             criteriaBuilder.like(
                 criteriaBuilder.concat(
                     criteriaBuilder.concat(
-                        root.get("firstName"), 
+                        criteriaBuilder.lower(root.get("firstName")), 
                         criteriaBuilder.literal(" ")),
-                    root.get("lastName")), 
-                name+"%");
+                    criteriaBuilder.lower(root.get("lastName"))), 
+                name.toLowerCase()+"%");
     }
 
     public static Specification<Doctor> haveCodeEqual(String code){
         return (root, _, criteriaBuilder) -> 
             criteriaBuilder.equal(
-                root.get("code"), 
-                code);
+                criteriaBuilder.lower(root.get("code")), 
+                code.toLowerCase());
     }
 
     public static Specification<Doctor> haveSpecialization(String specificationId){
@@ -79,7 +79,7 @@ public class DoctorSpecifications {
                 Function<String, Specification<Doctor>> specificationMethod =
                     specificationMap.get(key);
                 
-                if (specificationMethod != null) {
+                if (specificationMethod != null && value != null) {
                     finalSpecification.and(
                         specificationMethod.apply(value)
                     );

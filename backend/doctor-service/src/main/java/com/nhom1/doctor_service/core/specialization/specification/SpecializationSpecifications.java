@@ -27,15 +27,15 @@ public class SpecializationSpecifications {
     public static Specification<Specialization> haveNameLike(String name){
         return (root, _, criteriaBuilder) -> 
             criteriaBuilder.like(
-                root.get("name"), 
-                "%"+name+"%");
+                criteriaBuilder.lower(root.get("name")), 
+                "%"+name.toLowerCase()+"%");
     }
 
     public static Specification<Specialization> haveCodeEqual(String code){
         return (root, _, criteriaBuilder) -> 
             criteriaBuilder.equal(
-                root.get("code"), 
-                code);
+                criteriaBuilder.lower(root.get("code")), 
+                code.toLowerCase());
     }
 
     public static Specification<Specialization> createSearchSpecification(Map<String,String> params){
@@ -48,7 +48,7 @@ public class SpecializationSpecifications {
                 Function<String, Specification<Specialization>> specificationMethod =
                     specificationMap.get(key);
                 
-                if (specificationMethod != null) {
+                if (specificationMethod != null && value != null) {
                     finalSpecification.and(
                         specificationMethod.apply(value)
                     );

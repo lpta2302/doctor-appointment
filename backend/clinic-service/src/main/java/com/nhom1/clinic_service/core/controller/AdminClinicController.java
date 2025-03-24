@@ -7,7 +7,7 @@ import com.nhom1.clinic_service.core.entity.Clinic;
 import com.nhom1.clinic_service.core.service.ClinicService;
 import lombok.RequiredArgsConstructor;
 import java.util.List;
-import java.util.Map;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -40,6 +41,7 @@ public class AdminClinicController {
 
     @GetMapping
     public ResponseEntity<PageResponse<Clinic>> findAll(
+        @ParameterObject
         @PageableDefault(page = 0, size = 15) Pageable pageable) {
         return ResponseEntity.ok(clinicService.findAll(pageable));
     }
@@ -49,18 +51,35 @@ public class AdminClinicController {
         return ResponseEntity.ok(clinicService.findById(clinicId));
     }
 
-    @GetMapping("/ids-in")
+    @GetMapping("/ids")
     public ResponseEntity<PageResponse<Clinic>> findAllById(
+        @ParameterObject
         @PageableDefault(page = 0, size = 15) Pageable pageable,
         @RequestParam List<Long> clinicIds) {
         return ResponseEntity.ok(clinicService.findAllById(clinicIds, pageable));
     }
     
     @GetMapping("/search")
-    public ResponseEntity<PageResponse<Clinic>> search(
+    public ResponseEntity<PageResponse<Clinic>> findByCodeOrName(
+        @ParameterObject
         @PageableDefault(page = 0, size = 15) Pageable pageable,
-        @RequestParam Map<String, String> params) {
-        return null;
+        @RequestParam(required=false) String code, 
+        @RequestParam(required=false) String name
+        ) {
+        return ResponseEntity.ok(clinicService.findAllByCodeOrName(code, name, pageable));
     }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long clinicId) {
+        clinicService.deleteById(clinicId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteAllById(@RequestParam List<Long> clinicIds) {
+        clinicService.deleteAllById(clinicIds);
+        return ResponseEntity.noContent().build();
+    }
+    
     
 }

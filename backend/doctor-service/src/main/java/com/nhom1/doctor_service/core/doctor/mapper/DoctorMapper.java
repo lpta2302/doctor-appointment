@@ -22,7 +22,25 @@ public class DoctorMapper {
             .phoneNumber(doctorRequest.phoneNumber())
             .dateOfBirth(doctorRequest.dateOfBirth())
             .qualification(doctorRequest.qualification())
+            .workplace(doctorRequest.workplace())
+            .yearsOfExperience(doctorRequest.yearsOfExperience())
             .build();
+    }
+
+    public Doctor copyDoctorFrom(Doctor doctor, DoctorRequest doctorRequest) {
+        if (!doctor.getCode().equals(doctorRequest.code())) {
+            doctor.setCode(doctorRequest.code());
+        }
+        doctor.setFirstName(doctorRequest.firstName());
+        doctor.setLastName(doctorRequest.lastName());
+        doctor.setGender(doctorRequest.gender());
+        doctor.setDescription(doctorRequest.description());
+        doctor.setPhoneNumber(doctorRequest.phoneNumber());
+        doctor.setDateOfBirth(doctorRequest.dateOfBirth());
+        doctor.setQualification(doctorRequest.qualification());
+        doctor.setWorkplace(doctorRequest.workplace());
+        doctor.setYearsOfExperience(doctorRequest.yearsOfExperience());
+        return doctor;
     }
 
     public DoctorResponse convertDoctorResponseFrom(Doctor doctor){

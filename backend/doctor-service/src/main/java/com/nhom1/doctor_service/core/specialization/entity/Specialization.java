@@ -54,5 +54,6 @@ public class Specialization {
     private BigDecimal price;
 
     @ManyToMany(mappedBy="specializations")
+    @JsonIgnore
     private List<Doctor> doctors;
 }

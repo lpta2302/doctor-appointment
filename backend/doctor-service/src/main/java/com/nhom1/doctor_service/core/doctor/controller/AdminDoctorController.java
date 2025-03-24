@@ -1,7 +1,9 @@
 package com.nhom1.doctor_service.core.doctor.controller;
 
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -39,28 +41,7 @@ public class AdminDoctorController {
         );
     }
 
-    @GetMapping
-    public ResponseEntity<PageResponse<DoctorResponse>> findAll(
-        @PageableDefault(page=0, size=15)
-        Pageable pageable) {
-        return ResponseEntity.ok(doctorService.findAll(pageable));
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<PageResponse<DoctorResponse>> findAll(
-        @PageableDefault(page=0, size=15)
-        Pageable pageable,
-        @RequestParam(required = false) String code,
-        @RequestParam(required = false) String name) {
-        return ResponseEntity.ok(doctorService.findByNameOrCode(code, name, pageable));
-    }
-
-    @GetMapping("/{DoctorId}")
-    public ResponseEntity<Doctor> findById(@PathVariable Long DoctorId) {
-        return ResponseEntity.ok(doctorService.findById(DoctorId));
-    }
-    
-    @PutMapping("/{DoctorId}")
+    @PutMapping("/{doctorId}")
     public ResponseEntity<Long> update(
         @PathVariable Long doctorId, 
         @RequestBody @Valid DoctorRequest doctor) {
@@ -69,7 +50,46 @@ public class AdminDoctorController {
         );
     }
 
-    @DeleteMapping("/{DoctorId}")
+    @GetMapping
+    public ResponseEntity<PageResponse<DoctorResponse>> findAll(
+        @ParameterObject
+        @PageableDefault(page=0, size=15)
+        Pageable pageable) {
+        return ResponseEntity.ok(doctorService.findAll(pageable));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<PageResponse<DoctorResponse>> search(
+            @ParameterObject
+            @PageableDefault(page=0, size=15) 
+            Pageable pageable,
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String code,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Long specializationId
+        ) {
+        Map<String, String> params = new HashMap<>(){{
+            put("id", String.valueOf(id));
+            put("code", code);
+            put("name", name);
+            put("specialization", String.valueOf(specializationId));
+        }};
+
+        
+        return ResponseEntity.ok(doctorService.search(params, pageable));
+    }
+
+    @GetMapping("/{doctorId}")
+    public ResponseEntity<Doctor> findById(@PathVariable Long doctorId) {
+        return ResponseEntity.ok(doctorService.findById(doctorId));
+    }
+
+    @GetMapping("/ids")
+    public ResponseEntity<List<Doctor>> findAllById(@RequestParam List<Long> doctorIds) {
+        return ResponseEntity.ok(doctorService.findAllById(doctorIds));
+    }
+
+    @DeleteMapping("/{doctorId}")
     public ResponseEntity<Void> deleteById(@PathVariable Long doctorId) {
         doctorService.deleteById(doctorId);
         return ResponseEntity.noContent().build();

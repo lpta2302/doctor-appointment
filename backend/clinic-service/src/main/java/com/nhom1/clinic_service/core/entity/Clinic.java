@@ -37,4 +37,8 @@ public class Clinic {
     @Column(length=200, unique = true)
     @Size(min=1, max=200, message="code has 1-200 characters")
     private String code;
+
+    @Column(length=200)
+    @Size(min=1, max=200, message="name has 1-200 characters")
+    private String name;
 }
