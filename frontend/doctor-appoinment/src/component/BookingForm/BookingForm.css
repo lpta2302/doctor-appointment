@@ -1,0 +1,20 @@
+.booking-form .desc-input {
+    height: 295px;
+}
+
+.booking-form .btn-submit {
+    width: 100px;
+    border: none;
+    background-color: #54ccec;
+    color: #333;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: 500;
+    transition: transform 0.2s ease-in-out;
+}
+
+.booking-form .btn-submit:hover {
+    background-color: #1974d3;
+    color: white;
+    transform: scale(1.1);
+}
