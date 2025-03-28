@@ -1,0 +1,76 @@
+package com.nhom1.shift_service.core.schedule.entity;
+
+import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
+import static jakarta.persistence.CascadeType.ALL;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nhom1.shift_service.core.shift.entity.Shift;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "schedules")
+public class Schedule {
+    @EmbeddedId
+    private ScheduleId scheduleId;
+    
+    @Version
+    @JsonIgnore
+    private Long version;
+
+    @OneToMany(mappedBy = "schedule", cascade = ALL, orphanRemoval = true)
+    @OrderBy("startTime ASC")
+    private List<Shift> shifts;
+
+    @Schema(accessMode = READ_ONLY)
+    public Shift getCurrentShift(){
+        return shifts.stream()
+            .filter(shift -> 
+                shift.getStartTime().isBefore(LocalTime.now()) &&
+                shift.getEndTime().isAfter(LocalTime.now()))
+            .findFirst()
+            .orElse(null);
+    }
+
+    public Schedule(LocalDate appliedDate, Long clinicId){
+        scheduleId = new ScheduleId();
+        scheduleId.setAppliedDate(appliedDate);
+        scheduleId.setClinicId(clinicId);
+    }
+
+    public void addShift(Shift newShift) {
+        if (shifts == null) {
+            shifts = new ArrayList<>();
+        }
+
+        shifts.add(newShift);
+        newShift.setSchedule(this);
+    }
+
+    public void insertShift(int index, Shift newShift) {
+        if (shifts == null) {
+            shifts = new ArrayList<>();
+        }
+
+        shifts.add(index, newShift);
+        newShift.setSchedule(this);
+    }
+}

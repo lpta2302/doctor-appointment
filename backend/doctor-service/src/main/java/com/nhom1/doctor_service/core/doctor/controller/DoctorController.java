@@ -44,12 +44,11 @@ public class DoctorController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Long specializationId
         ) {
-        Map<String, String> params = new HashMap<>(){{
-            put("id", String.valueOf(id));
-            put("code", code);
-            put("name", name);
-            put("specialization", String.valueOf(specializationId));
-        }};
+        Map<String, String> params = new HashMap<>();
+        if (id != null) params.put("id", id.toString());
+        if (code != null) params.put("code", code);
+        if (name != null) params.put("name", name);
+        if (specializationId != null) params.put("specialization", specializationId.toString());
 
         
         return ResponseEntity.ok(doctorService.search(params, pageable));

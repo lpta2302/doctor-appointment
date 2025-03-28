@@ -41,20 +41,18 @@ public class SpecializationSpecifications {
     public static Specification<Specialization> createSearchSpecification(Map<String,String> params){
         Specification<Specialization> finalSpecification = Specification.where(null);
 
-        params.entrySet().forEach(
-            entry->{
-                String key = entry.getKey();
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            String key = entry.getKey();
                 String value = entry.getValue();
                 Function<String, Specification<Specialization>> specificationMethod =
                     specificationMap.get(key);
                 
                 if (specificationMethod != null && value != null) {
-                    finalSpecification.and(
+                    finalSpecification = finalSpecification.and(
                         specificationMethod.apply(value)
                     );
                 }
-            }
-        );
+        }
 
         return finalSpecification;
     }

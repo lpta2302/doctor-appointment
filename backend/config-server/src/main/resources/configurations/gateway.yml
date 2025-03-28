@@ -21,6 +21,14 @@ spring:
           uri: lb://DOCTOR-SERVICE
           predicates:
             - Path=/api/v1/admin/specializations/**
+        - id: admin-clinic-service
+          uri: lb://CLINIC-SERVICE
+          predicates:
+            - Path=/api/v1/admin/clinics/**
+        - id: clinic-service
+          uri: lb://CLINIC-SERVICE
+          predicates:
+            - Path=/api/v1/clinics/**
 
 eureka:
   client:

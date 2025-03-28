@@ -16,7 +16,7 @@ import com.nhom1.doctor_service.core.doctor.repository.DoctorRepository;
 import com.nhom1.doctor_service.core.doctor.specification.DoctorSpecifications;
 import com.nhom1.doctor_service.core.specialization.entity.Specialization;
 import com.nhom1.doctor_service.core.specialization.service.SpecializationService;
-
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +33,9 @@ public class DoctorService {
         
         List<Specialization> specializations = 
             specializationService.findAllById(doctorRequest.specializationIds());
+
+        validateSpecializations(specializations, doctorRequest);
+
         doctor.setSpecializations(specializations);
 
         return doctorRepository.save(doctor).getId();
@@ -45,6 +48,9 @@ public class DoctorService {
         
         List<Specialization> specializations = 
             specializationService.findAllById(doctorRequest.specializationIds());
+
+        validateSpecializations(specializations, doctorRequest);
+            
         doctor.setSpecializations(specializations);
 
         return doctorRepository.save(doctor).getId();
@@ -89,6 +95,21 @@ public class DoctorService {
 
     public void deleteAllById(List<Long> doctorIds) {
         doctorRepository.deleteAllById(doctorIds);
+    }
+
+    private void validateSpecializations(List<Specialization> specializations, DoctorRequest doctorRequest){
+        if (specializations.size() != doctorRequest.specializationIds().size()) {
+            List<Long> ids = specializations.stream().map(Specialization::getId).toList();
+
+            List<String> notFoundIds = doctorRequest.specializationIds().stream().map(
+                id-> !ids.contains(id) ? String.valueOf(id) : null
+            ).toList();
+
+            throw new EntityNotFoundException(
+                    "Not found Specialization with ids: "+
+                    String.join(", ", notFoundIds)
+            );
+        }
     }
 
 }

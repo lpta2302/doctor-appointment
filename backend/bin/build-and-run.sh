@@ -1,11 +1,11 @@
 #!/bin/sh
 
 echo "🏗️  Building all services..."
-SERVICES=("config-server" "discovery-server" "gateway" "clinic-service" "doctor-service")  # Danh sách thư mục chứa các service
+SERVICES=($(cat services.txt))
 
 for SERVICE in "${SERVICES[@]}"; do
   echo "🔨 Building $SERVICE..."
-  (cd "$SERVICE" && ./mvnw clean package -DskipTests)
+  (cd "../$SERVICE" && ./mvnw clean package -DskipTests)
   if [ $? -ne 0 ]; then
     echo "❌ Build failed for $SERVICE. Exiting..."
     exit 1
