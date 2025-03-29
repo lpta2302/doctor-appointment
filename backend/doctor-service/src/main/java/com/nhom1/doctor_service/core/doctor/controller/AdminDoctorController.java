@@ -84,11 +84,6 @@ public class AdminDoctorController {
         return ResponseEntity.ok(doctorService.findById(doctorId));
     }
 
-    @GetMapping("/ids")
-    public ResponseEntity<List<Doctor>> findAllById(@RequestParam List<Long> doctorIds) {
-        return ResponseEntity.ok(doctorService.findAllById(doctorIds));
-    }
-
     @DeleteMapping("/{doctorId}")
     public ResponseEntity<Void> deleteById(@PathVariable Long doctorId) {
         doctorService.deleteById(doctorId);

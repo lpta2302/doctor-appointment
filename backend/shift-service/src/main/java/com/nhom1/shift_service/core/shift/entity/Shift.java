@@ -4,6 +4,7 @@ import java.time.LocalTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nhom1.shift_service.core.schedule.entity.Schedule;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
@@ -36,10 +37,6 @@ public class Shift {
     @NotNull(message = "doctor id can't be null")
     @PositiveOrZero(message = "doctor id must be equal or greater than 0")
     private Long doctorId;
-    
-    @NotNull(message = "specialization id can't be null")
-    @PositiveOrZero(message = "specialization id must be equal or greater than 0")
-    private Long specializationId;
 
     @NotNull
     private LocalTime startTime;
@@ -47,6 +44,7 @@ public class Shift {
     @NotNull
     private LocalTime endTime;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Schedule schedule;
 }

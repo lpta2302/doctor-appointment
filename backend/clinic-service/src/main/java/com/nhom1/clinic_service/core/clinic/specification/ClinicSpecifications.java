@@ -1,4 +1,4 @@
-package com.nhom1.clinic_service.core.specification;
+package com.nhom1.clinic_service.core.clinic.specification;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,7 +7,7 @@ import java.util.function.Function;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.nhom1.clinic_service.common.TypeCaster;
-import com.nhom1.clinic_service.core.entity.Clinic;
+import com.nhom1.clinic_service.core.clinic.entity.Clinic;
 
 public class ClinicSpecifications {
     private final static Map<String, Function<String, Specification<Clinic>>> specificationMap =

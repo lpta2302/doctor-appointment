@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -40,7 +39,7 @@ public class AdminScheduleController {
     public ResponseEntity<Long> addShift(
         Long clinicId,
         LocalDate appliedDate,
-        @RequestBody ShiftRequest shiftRequest
+        @RequestBody @Valid ShiftRequest shiftRequest
     ) { 
         return ResponseEntity.ok(scheduleService.addShift(clinicId, appliedDate, shiftRequest));
     }
@@ -50,7 +49,7 @@ public class AdminScheduleController {
         Long clinicId,
         LocalDate appliedDate,
         Long shiftId,
-        @RequestBody ShiftRequest shiftRequest
+        @RequestBody @Valid ShiftRequest shiftRequest
     ) { 
         return ResponseEntity.ok(
             scheduleService.updateShift(clinicId, appliedDate, shiftId, shiftRequest)
@@ -72,10 +71,9 @@ public class AdminScheduleController {
         Long clinicId,
         LocalDate appliedDate
     ) {
-        return ResponseEntity.ok(scheduleService.findScheduleDetailById(clinicId,appliedDate));
+        return ResponseEntity.ok(scheduleService.findScheduleWithShiftDetailById(clinicId,appliedDate));
     }
     
-
     @DeleteMapping("/{clinicId}/{appliedDate}")
     public ResponseEntity<Void> deleteById(
         Long clinicId,

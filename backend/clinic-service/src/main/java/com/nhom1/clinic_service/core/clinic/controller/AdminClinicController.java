@@ -1,12 +1,16 @@
-package com.nhom1.clinic_service.core.controller;
+package com.nhom1.clinic_service.core.clinic.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.nhom1.clinic_service.common.PageResponse;
-import com.nhom1.clinic_service.core.entity.Clinic;
-import com.nhom1.clinic_service.core.service.ClinicService;
+import com.nhom1.clinic_service.core.clinic.entity.Clinic;
+import com.nhom1.clinic_service.core.clinic.service.ClinicService;
+
 import lombok.RequiredArgsConstructor;
+
 import java.util.List;
+
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -18,6 +22,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.nhom1.clinic_service.core.clinic.dto.ClinicResponse;
 
 
 
@@ -40,27 +46,19 @@ public class AdminClinicController {
     }
 
     @GetMapping
-    public ResponseEntity<PageResponse<Clinic>> findAll(
+    public ResponseEntity<PageResponse<ClinicResponse>> findAll(
         @ParameterObject
         @PageableDefault(page = 0, size = 15) Pageable pageable) {
         return ResponseEntity.ok(clinicService.findAll(pageable));
     }
     
     @GetMapping("/{clinicId}")
-    public ResponseEntity<Clinic> findById(@PathVariable Long clinicId) {
-        return ResponseEntity.ok(clinicService.findById(clinicId));
+    public ResponseEntity<ClinicResponse> findById(@PathVariable Long clinicId) {
+        return ResponseEntity.ok(clinicService.findClinicWithSpecializationById(clinicId));
     }
 
-    @GetMapping("/ids")
-    public ResponseEntity<PageResponse<Clinic>> findAllById(
-        @ParameterObject
-        @PageableDefault(page = 0, size = 15) Pageable pageable,
-        @RequestParam List<Long> clinicIds) {
-        return ResponseEntity.ok(clinicService.findAllById(clinicIds, pageable));
-    }
-    
     @GetMapping("/search")
-    public ResponseEntity<PageResponse<Clinic>> findByCodeOrName(
+    public ResponseEntity<PageResponse<ClinicResponse>> findByCodeOrName(
         @ParameterObject
         @PageableDefault(page = 0, size = 15) Pageable pageable,
         @RequestParam(required=false) String code, 

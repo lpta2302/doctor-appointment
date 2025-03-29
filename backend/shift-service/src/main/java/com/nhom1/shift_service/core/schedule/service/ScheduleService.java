@@ -3,20 +3,22 @@ package com.nhom1.shift_service.core.schedule.service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import org.springdoc.core.converters.models.Pageable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import com.nhom1.shift_service.common.PageResponse;
+import com.nhom1.shift_service.core.clinic.client.ClinicClient;
+import com.nhom1.shift_service.core.clinic.dto.ClinicResponse;
 import com.nhom1.shift_service.core.schedule.dto.ScheduleRequest;
 import com.nhom1.shift_service.core.schedule.dto.ScheduleResponse;
 import com.nhom1.shift_service.core.schedule.entity.Schedule;
 import com.nhom1.shift_service.core.schedule.entity.ScheduleId;
-import com.nhom1.shift_service.core.schedule.mapper.ScheduleMapper;
 // import com.nhom1.shift_service.core.schedule.mapper.ScheduleMapper;
 import com.nhom1.shift_service.core.schedule.repository.ScheduleRepository;
 import com.nhom1.shift_service.core.schedule.specification.ScheduleSpecifications;
 import com.nhom1.shift_service.core.shift.dto.ShiftRequest;
+import com.nhom1.shift_service.core.shift.dto.ShiftResponse;
 import com.nhom1.shift_service.core.shift.entity.Shift;
 import com.nhom1.shift_service.core.shift.service.ShiftService;
 import jakarta.persistence.EntityNotFoundException;
@@ -29,9 +31,11 @@ public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
     // private final ScheduleMapper scheduleMapper;
     private final ShiftService shiftService;
-    private final ScheduleMapper scheduleMapper;
+    private final ClinicClient clinicClient;
     
     public ScheduleId create(ScheduleRequest scheduleRequest) {
+        validateSchedule(scheduleRequest);
+
         Schedule schedule = 
             new Schedule(scheduleRequest.appliedDate(), scheduleRequest.clinicId());
 
@@ -48,7 +52,6 @@ public class ScheduleService {
         Shift newShift = 
             Shift.builder()
                 .doctorId(shiftRequest.doctorId())
-                .specializationId(shiftRequest.specializationId())
                 .startTime(shiftRequest.startTime())
                 .endTime(shiftRequest.endTime())
                 .build();
@@ -100,13 +103,18 @@ public class ScheduleService {
         return findById(id);
     }
     
-    public ScheduleResponse findScheduleDetailById(Long clinicId, LocalDate appliedDate){
-        var id = ScheduleId.builder()
+    public ScheduleResponse findScheduleWithShiftDetailById(Long clinicId, LocalDate appliedDate){
+        Schedule schedule = findById(clinicId, appliedDate);
+
+        List<ShiftResponse> shiftResponse = shiftService.findAllBySchedule(schedule);
+
+        ScheduleResponse response = ScheduleResponse.builder()
+            .shifts(shiftResponse)
             .clinicId(clinicId)
             .appliedDate(appliedDate)
             .build();
 
-        return null;
+        return response;
     }
         
     public PageResponse<Schedule> search(Map<String, String> params, Pageable pageable){
@@ -125,5 +133,13 @@ public class ScheduleService {
 
     public void deleteAllById(List<ScheduleId> scheduleIds){
         scheduleRepository.deleteAllById(scheduleIds);
+    }
+
+    private void validateSchedule(ScheduleRequest scheduleRequest) {
+        clinicClient.findById(scheduleRequest.clinicId())
+            .orElseThrow(()->new EntityNotFoundException("not found clinic with id: "+scheduleRequest.clinicId()));
+        if (scheduleRequest.appliedDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Can't set schedule for a day before");
+        }
     }
 }
