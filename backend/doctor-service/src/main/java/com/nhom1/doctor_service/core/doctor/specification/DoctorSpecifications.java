@@ -1,8 +1,6 @@
 package com.nhom1.doctor_service.core.doctor.specification;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,10 +14,9 @@ public class DoctorSpecifications {
 
     static {
         specificationMap.put("id", DoctorSpecifications::haveIdEqual);
-        specificationMap.put("ids", DoctorSpecifications::haveIdEqualIn);
         specificationMap.put("name", DoctorSpecifications::haveNameLike);
         specificationMap.put("code", DoctorSpecifications::haveCodeEqual);
-        specificationMap.put("specification", DoctorSpecifications::haveSpecialization);
+        specificationMap.put("specialization", DoctorSpecifications::haveSpecialization);
     }
     
     public static Specification<Doctor> haveIdEqual(String id){
@@ -29,27 +26,22 @@ public class DoctorSpecifications {
                 TypeCaster.castToNumber(root.get("id").getJavaType(), id));
     }
 
-    public static Specification<Doctor> haveIdEqualIn(String idsString){
-        return (root, _, _) -> {
-            List<Object> ids = 
-                Arrays
-                .stream(idsString.split(","))
-                .map(id->TypeCaster.castToNumber(root.get("id").getJavaType(), id))
-                .toList();
-
-            return root.get("id").in(ids);
-        };
-    }
-
     public static Specification<Doctor> haveNameLike(String name){
-        return (root, _, criteriaBuilder) -> 
+        Specification<Doctor> checkLastName = (root, _, criteriaBuilder) -> 
             criteriaBuilder.like(
-                criteriaBuilder.concat(
-                    criteriaBuilder.concat(
-                        criteriaBuilder.lower(root.get("firstName")), 
-                        criteriaBuilder.literal(" ")),
-                    criteriaBuilder.lower(root.get("lastName"))), 
+                criteriaBuilder.lower(root.get("lastName")), 
                 name.toLowerCase()+"%");
+
+        Specification<Doctor> checkFullname = (root, _, criteriaBuilder) -> 
+        criteriaBuilder.like(
+            criteriaBuilder.concat(
+                criteriaBuilder.concat(
+                    criteriaBuilder.lower(root.get("firstName")), 
+                    criteriaBuilder.literal(" ")),
+                criteriaBuilder.lower(root.get("lastName"))), 
+            "%" + name.toLowerCase() + "%");
+
+        return checkLastName.or(checkFullname);
     }
 
     public static Specification<Doctor> haveCodeEqual(String code){
@@ -72,20 +64,18 @@ public class DoctorSpecifications {
     public static Specification<Doctor> createSearchSpecification(Map<String,String> params){
         Specification<Doctor> finalSpecification = Specification.where(null);
 
-        params.entrySet().forEach(
-            entry->{
-                String key = entry.getKey();
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            String key = entry.getKey();
                 String value = entry.getValue();
                 Function<String, Specification<Doctor>> specificationMethod =
                     specificationMap.get(key);
                 
                 if (specificationMethod != null && value != null) {
-                    finalSpecification.and(
+                    finalSpecification = finalSpecification.and(
                         specificationMethod.apply(value)
                     );
                 }
-            }
-        );
+        }
 
         return finalSpecification;
     }
