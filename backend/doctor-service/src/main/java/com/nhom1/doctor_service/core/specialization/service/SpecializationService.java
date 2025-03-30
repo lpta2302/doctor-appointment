@@ -34,6 +34,10 @@ public class SpecializationService {
         return specializationRepository.save(specialization).getId();
     }
 
+    public boolean checkById(Long id){
+        return specializationRepository.existsById(id);
+    }
+
     public Specialization findById(Long id){
         return specializationRepository.findById(id)
             .orElseThrow(()-> new EntityNotFoundException(

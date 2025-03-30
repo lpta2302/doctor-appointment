@@ -17,6 +17,15 @@ import lombok.RequiredArgsConstructor;
 public class ServerClinicController {
     private final ClinicService clinicService;
 
+    @GetMapping("/{clinicId}/exists")
+    public ResponseEntity<Void> checkExistById(@PathVariable Long clinicId) {
+        if (clinicService.checkExistById(clinicId)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping("/{clinicId}")
     public ResponseEntity<Clinic> findById(@PathVariable Long clinicId) {
         return ResponseEntity.ok(clinicService.findById(clinicId));

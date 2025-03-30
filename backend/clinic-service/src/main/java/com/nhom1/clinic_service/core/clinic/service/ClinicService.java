@@ -1,7 +1,6 @@
 package com.nhom1.clinic_service.core.clinic.service;
 
 import java.util.List;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,7 @@ import com.nhom1.clinic_service.core.clinic.repository.ClinicRepository;
 import com.nhom1.clinic_service.core.clinic.specification.ClinicSpecifications;
 import com.nhom1.clinic_service.core.specialization.client.SpecializationClient;
 import com.nhom1.clinic_service.core.specialization.dto.SpecializationResponse;
-
+import feign.FeignException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -22,38 +21,36 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ClinicService {
 
-    private final SpecializationClient specializationService;
+    private final SpecializationClient specializationClient;
     private final ClinicRepository clinicRepository;
     private final ClinicMapper clinicMapper;
 
     public Long create(Clinic clinic) {
-
-        specializationService.findById(clinic.getSpecializationId())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "not found specialization with id: " + clinic.getSpecializationId()));
-
+        validateSpecialization(clinic.getSpecializationId());
+        
         return clinicRepository.save(clinic).getId();
     }
 
     public Long update(Long clinicId, Clinic clinic) {
-        specializationService.findById(clinic.getSpecializationId())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "not found specialization with id: " + clinic.getSpecializationId()));
-
         Clinic foundClinic = findById(clinicId);
+            
         if (!foundClinic.getCode().equals(clinic.getCode())) {
-            foundClinic.setCode(clinic.getCode());
+                foundClinic.setCode(clinic.getCode());
         }
+
+        if (foundClinic.getSpecializationId() != clinic.getSpecializationId()) {
+                validateSpecialization(clinic.getSpecializationId());
+                foundClinic.setSpecializationId(clinic.getSpecializationId());
+        } 
         foundClinic.setName(clinic.getName());
-        foundClinic.setSpecializationId(clinic.getSpecializationId());
 
         return clinicRepository.save(foundClinic).getId();
     }
 
-    public PageResponse<ClinicResponse> findAll(Pageable pageable) {
+    public PageResponse<ClinicResponse> findAllWithSpecialization(Pageable pageable) {
         var pageResult = clinicRepository.findAll(pageable);
 
-        List<SpecializationResponse> specializationResponses = specializationService
+        List<SpecializationResponse> specializationResponses = specializationClient
                 .findAllById(pageResult.stream().map(Clinic::getSpecializationId).toList());
 
         return PageResponse.fromPage(pageResult,
@@ -70,17 +67,16 @@ public class ClinicService {
                         .toList());
     }
 
-    public PageResponse<ClinicResponse> findAllByCodeOrName(String code, String name,
-            Pageable pageable) {
-        if (code == null && name == null) {
-            throw new IllegalArgumentException("name and code can't be null");
-        }
+    public PageResponse<ClinicResponse> searchAllWithSpecialization(
+        String code, String name, Long specializationId,
+        Pageable pageable) {
 
         Specification<Clinic> specification = ClinicSpecifications.haveCodeEqual(code)
-                .or(ClinicSpecifications.haveNameLike(name));
+                .or(ClinicSpecifications.haveNameLike(name))
+                .or(ClinicSpecifications.haveSpecializationIdEqual(specializationId));
         var pageResult = clinicRepository.findAll(specification, pageable);
 
-        List<SpecializationResponse> specializationResponses = specializationService
+        List<SpecializationResponse> specializationResponses = specializationClient
                 .findAllById(pageResult.stream().map(Clinic::getSpecializationId).toList());
 
         return PageResponse.fromPage(pageResult,
@@ -97,10 +93,10 @@ public class ClinicService {
                         .toList());
     }
 
-    public ClinicResponse findClinicWithSpecializationById(Long clinicId) {
+    public ClinicResponse findWithSpecializationById(Long clinicId) {
         Clinic clinic = findById(clinicId);
         SpecializationResponse specializationResponse = 
-            specializationService.findById(clinic.getSpecializationId())
+            specializationClient.findById(clinic.getSpecializationId())
             .orElseThrow(()->new EntityNotFoundException(
                 "not found specialization with id: "
                         + clinic.getSpecializationId()));
@@ -110,6 +106,10 @@ public class ClinicService {
             .code(clinic.getCode())
             .specialization(specializationResponse)
             .build();
+    }
+
+    public boolean checkExistById(Long clinicId) {
+        return clinicRepository.existsById(clinicId);
     }
 
     public Clinic findById(Long clinicId) {
@@ -127,5 +127,18 @@ public class ClinicService {
 
     public void deleteAllById(List<Long> clinicIds) {
         clinicRepository.deleteAllById(clinicIds);
+    }
+
+    private void validateSpecialization(Long specializationId){
+        try {
+                specializationClient
+                .checkById(specializationId)
+                .getStatusCode();
+        } catch (FeignException.NotFound e) {
+                throw new EntityNotFoundException(
+                        "not found specialization with id: " + specializationId);
+        } catch (Exception e) {
+                throw e;
+        }
     }
 }

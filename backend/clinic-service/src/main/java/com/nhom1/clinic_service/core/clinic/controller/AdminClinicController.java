@@ -49,22 +49,23 @@ public class AdminClinicController {
     public ResponseEntity<PageResponse<ClinicResponse>> findAll(
         @ParameterObject
         @PageableDefault(page = 0, size = 15) Pageable pageable) {
-        return ResponseEntity.ok(clinicService.findAll(pageable));
+        return ResponseEntity.ok(clinicService.findAllWithSpecialization(pageable));
     }
     
     @GetMapping("/{clinicId}")
     public ResponseEntity<ClinicResponse> findById(@PathVariable Long clinicId) {
-        return ResponseEntity.ok(clinicService.findClinicWithSpecializationById(clinicId));
+        return ResponseEntity.ok(clinicService.findWithSpecializationById(clinicId));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<PageResponse<ClinicResponse>> findByCodeOrName(
+    public ResponseEntity<PageResponse<ClinicResponse>> search(
         @ParameterObject
         @PageableDefault(page = 0, size = 15) Pageable pageable,
         @RequestParam(required=false) String code, 
-        @RequestParam(required=false) String name
+        @RequestParam(required=false) String name,
+        @RequestParam(required=false) Long specializationId
         ) {
-        return ResponseEntity.ok(clinicService.findAllByCodeOrName(code, name, pageable));
+        return ResponseEntity.ok(clinicService.searchAllWithSpecialization(code, name,specializationId ,pageable));
     }
 
     @DeleteMapping("{id}")
@@ -74,7 +75,7 @@ public class AdminClinicController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteAllById(@RequestParam List<Long> clinicIds) {
+    public ResponseEntity<Void> deleteAllById(@RequestBody List<Long> clinicIds) {
         clinicService.deleteAllById(clinicIds);
         return ResponseEntity.noContent().build();
     }

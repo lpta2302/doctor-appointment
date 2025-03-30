@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -15,6 +16,8 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
     url = "${application.config.specialization-url}"    
 )
 public interface SpecializationClient {
+    @GetMapping("/{specializationId}/exists")
+    ResponseEntity<Void> checkById(@PathVariable Long specializationId);
     @GetMapping("/{specializationId}")
     Optional<SpecializationResponse> findById(@PathVariable Long specializationId);
     @GetMapping("/ids")

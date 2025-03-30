@@ -17,6 +17,7 @@ public class ClinicSpecifications {
         specificationMap.put("id", ClinicSpecifications::haveIdEqual);
         specificationMap.put("name", ClinicSpecifications::haveNameLike);
         specificationMap.put("code", ClinicSpecifications::haveCodeEqual);
+        specificationMap.put("specialization", ClinicSpecifications::haveSpecializationIdEqual);
     }
     
     public static Specification<Clinic> haveIdEqual(String id){
@@ -59,5 +60,20 @@ public class ClinicSpecifications {
         );
 
         return finalSpecification;
+    }
+
+    public static Specification<Clinic> haveSpecializationIdEqual(String specializationId) {
+        return (root, _, criteriaBuilder) -> 
+            criteriaBuilder.equal(
+                root.get("specializationId"), 
+                TypeCaster.castToNumber(
+                    root.get("specializationId").getJavaType(), specializationId));
+    }
+
+    public static Specification<Clinic> haveSpecializationIdEqual(Long specializationId) {
+        return (root, _, criteriaBuilder) -> 
+            criteriaBuilder.equal(
+                root.get("specializationId"), 
+                specializationId);
     }
 }

@@ -18,6 +18,16 @@ public class ServerSpecializationController {
 
     private final SpecializationService specializationService;
 
+    @GetMapping("/{specializationId}/exists")
+    public ResponseEntity<Void> checkById(@PathVariable Long specializationId) {
+        if (specializationService.checkById(specializationId)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+
+    }
+
     @GetMapping("/{specializationId}")
     public ResponseEntity<Specialization> findById(@PathVariable Long specializationId) {
         return ResponseEntity.ok(specializationService.findById(specializationId));
