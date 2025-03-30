@@ -1,0 +1,33 @@
+.footer {
+    background-color: #ffffff;
+    border-top: 1px solid #ddd;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .logout-icon {
+    font-size: 1rem;
+    margin-right: 8px;
+    color: #000000;
+    cursor: pointer;
+  }
+  
+  .logout-text {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #000000;
+    cursor: pointer;
+  }
+  
+  .copyright-btn {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #000000;
+    text-decoration: none;
+  }
+  
+  .copyright-btn:hover {
+    color: #1900fb;
+    text-decoration: underline;
+  }
+  
+  

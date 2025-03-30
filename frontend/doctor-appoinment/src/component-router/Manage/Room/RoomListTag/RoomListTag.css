@@ -1,0 +1,38 @@
+.clinic-tag {
+    padding: 12px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    width: 100%;  /* Tăng chiều rộng */
+}
+  
+.clinic-tag:hover {
+    background-color: #f0f8ff;
+}
+  
+.clinic-tag.selected {
+    background: #007bff;
+    color: white;
+    border-color: #0056b3;
+}
+  
+.clinic-tag p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+  
+.clinic-info {
+    display: flex;
+    justify-content: space-between;
+}
+  
+.clinic-specialty {
+    font-style: italic;
+    font-size: 13px;
+    color: #555;
+}

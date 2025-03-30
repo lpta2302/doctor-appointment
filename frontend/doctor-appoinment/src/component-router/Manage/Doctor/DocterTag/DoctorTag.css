@@ -1,0 +1,39 @@
+.doctor-tag {
+    padding: 12px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    width: 100%;  /* Tăng chiều rộng */
+  }
+  
+  .doctor-tag:hover {
+    background-color: #f0f8ff;
+  }
+  
+  .doctor-tag.selected {
+    background: #007bff;
+    color: white;
+    border-color: #0056b3;
+  }
+  
+  .doctor-tag p {
+    margin: 5px 0;
+    font-size: 14px;
+  }
+  
+  .doctor-info {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .doctor-specialty {
+    font-style: italic;
+    font-size: 13px;
+    color: #555;
+  }
+  

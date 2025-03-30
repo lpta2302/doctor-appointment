@@ -1,0 +1,41 @@
+.admin-dashboard {
+  background-color: #61c3cf;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: left;
+}
+
+.dashboard-content {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Khoảng cách giữa logo và chữ */
+}
+
+.dashboard-logo {
+  width: 150px;
+  height: auto;
+  filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.3));
+}
+
+.dashboard-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-title {
+  font-size: 36px;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  margin: 0;
+}
+
+.dashboard-subtitle {
+  font-size: 36px;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  margin: 10px 0 0 0;
+}

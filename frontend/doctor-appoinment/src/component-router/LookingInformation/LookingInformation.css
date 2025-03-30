@@ -1,0 +1,54 @@
+/* Đảm bảo trang full màn hình và Footer luôn nằm dưới */
+.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .looking-container {
+    flex: 1; /* Nội dung sẽ mở rộng để đẩy Footer xuống */
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .search-box {
+    margin-bottom: 15px;
+  }
+  
+  .search-btn {
+    width: 100%;
+    background-color: #007bff;
+    border: none;
+    font-weight: bold;
+  }
+  
+  .result-container {
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+  }
+  
+  .print-btn {
+    width: 100%;
+    background-color: #28a745;
+    border: none;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  
+  /* Cố định Footer xuống dưới */
+  .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #f8f9fa;
+    text-align: center;
+    padding: 10px 0;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  }
+  

@@ -1,0 +1,88 @@
+.custom-header {
+  background: #ffffff;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-bottom: 2px solid #ddd;
+  padding: 10px 20px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+.nav-links .nav-item,
+.nav-links .nav-dropdown {
+  margin: 0 20px;
+  font-weight: 600;
+  color: #000;
+  text-decoration: none;
+}
+
+.nav-links .nav-item:hover,
+.nav-links .nav-dropdown:hover {
+  color: #007bff;
+}
+
+.nav-dropdown {
+  position: relative;
+}
+
+.nav-dropdown .dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  display: none;
+}
+
+.nav-dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.profile-info {
+  display: flex;
+  align-items: center;
+}
+
+.employee-name {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.employee-id {
+  font-size: 12px;
+  color: #666;
+}
+
+.avatar-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-left: 10px;
+}
+
+.header-logo {
+  width: 80px;
+  height: 80px;
+}
+
+.clinic-text {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+@media (max-width: 992px) {
+  .nav-links {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .nav-links .nav-item {
+    margin: 10px 0;
+  }
+}

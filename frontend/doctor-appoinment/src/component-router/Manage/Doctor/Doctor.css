@@ -1,0 +1,88 @@
+.doctor-container {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 20px; /* Thêm khoảng cách phía trên */
+}
+
+/* Bên trái chứa tìm kiếm + form */
+.doctor-left {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  padding-right: 10px;
+  padding-top: 20px; /* Thêm khoảng cách phía trên */
+}
+
+/* Ô tìm kiếm */
+.search-container {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+/* Đường phân cách */
+.divider {
+  border: 0;
+  height: 1px;
+  background: #ccc;
+  margin: 10px 0;
+}
+
+/* Form bác sĩ */
+.doctor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f9f9f9;
+}
+
+.doctor-form input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+}
+
+.button-group button {
+  flex: 1;
+  padding: 8px;
+  margin: 0 5px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  background: #007bff;
+  color: white;
+}
+
+.button-group button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Bên phải chứa danh sách bác sĩ */
+.doctor-list {
+  width: 50%;
+  padding: 10px;
+  padding-top: 20px; /* Thêm khoảng cách phía trên */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f9f9f9;
+}

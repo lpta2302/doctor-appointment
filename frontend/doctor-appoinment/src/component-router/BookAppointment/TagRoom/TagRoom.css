@@ -1,0 +1,40 @@
+.tagroom-container {
+    width: 100%;
+    background: linear-gradient(135deg, #61c3cf, #42a5f5);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Căn chỉnh phần thông tin phòng khám */
+.tagroom-info h3 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 3px;
+    text-align: left;
+}
+
+.tagroom-info p {
+    font-size: 14px;
+    margin: 2px 0;
+    text-align: left;
+}
+
+/* Căn chỉnh phần địa điểm phòng */
+.tagroom-location {
+    text-align: left !important;
+}
+
+.tagroom-location p {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.location {
+    font-size: 14px;
+    font-weight: normal;
+    opacity: 0.9;
+}
