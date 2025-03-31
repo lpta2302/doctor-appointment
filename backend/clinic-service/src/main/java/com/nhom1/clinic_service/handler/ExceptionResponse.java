@@ -8,8 +8,8 @@ import lombok.Builder;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public record ExceptionResponse(
-    Integer bussinessErrorCode,
-    String bussinessErrorDescription,
+    Integer businessErrorCode,
+    String businessErrorDescription,
     String error,
     Set<String> validationErrors,
     Map<String, String> errors

@@ -1,6 +1,5 @@
 config-server
 discovery-server
 gateway
-clinic-service
 doctor-service
-shift-service
+clinic-service

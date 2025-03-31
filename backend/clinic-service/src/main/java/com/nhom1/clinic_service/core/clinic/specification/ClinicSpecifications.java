@@ -1,4 +1,4 @@
-package com.nhom1.clinic_service.core.specification;
+package com.nhom1.clinic_service.core.clinic.specification;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,7 +7,7 @@ import java.util.function.Function;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.nhom1.clinic_service.common.TypeCaster;
-import com.nhom1.clinic_service.core.entity.Clinic;
+import com.nhom1.clinic_service.core.clinic.entity.Clinic;
 
 public class ClinicSpecifications {
     private final static Map<String, Function<String, Specification<Clinic>>> specificationMap =
@@ -17,6 +17,7 @@ public class ClinicSpecifications {
         specificationMap.put("id", ClinicSpecifications::haveIdEqual);
         specificationMap.put("name", ClinicSpecifications::haveNameLike);
         specificationMap.put("code", ClinicSpecifications::haveCodeEqual);
+        specificationMap.put("specialization", ClinicSpecifications::haveSpecializationIdEqual);
     }
     
     public static Specification<Clinic> haveIdEqual(String id){
@@ -59,5 +60,20 @@ public class ClinicSpecifications {
         );
 
         return finalSpecification;
+    }
+
+    public static Specification<Clinic> haveSpecializationIdEqual(String specializationId) {
+        return (root, _, criteriaBuilder) -> 
+            criteriaBuilder.equal(
+                root.get("specializationId"), 
+                TypeCaster.castToNumber(
+                    root.get("specializationId").getJavaType(), specializationId));
+    }
+
+    public static Specification<Clinic> haveSpecializationIdEqual(Long specializationId) {
+        return (root, _, criteriaBuilder) -> 
+            criteriaBuilder.equal(
+                root.get("specializationId"), 
+                specializationId);
     }
 }

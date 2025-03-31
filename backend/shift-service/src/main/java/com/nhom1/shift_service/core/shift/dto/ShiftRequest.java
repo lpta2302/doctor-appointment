@@ -10,10 +10,6 @@ public record ShiftRequest(
     @NotNull(message = "doctor id can't be null")
     @PositiveOrZero(message = "doctor id must be equal or greater than 0")
     Long doctorId,
-    
-    @NotNull(message = "specializationId id can't be null")
-    @PositiveOrZero(message = "specializationId id must be equal or greater than 0")
-    Long specializationId,
 
     @NotNull
     LocalTime startTime,

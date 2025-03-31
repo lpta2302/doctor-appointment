@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo "🏗️  Building all services..."
-SERVICES=($(cat services.txt))
+SERVICES=($(cat services.txt | tr -d '\r'))
 
 for SERVICE in "${SERVICES[@]}"; do
   echo "🔨 Building $SERVICE..."

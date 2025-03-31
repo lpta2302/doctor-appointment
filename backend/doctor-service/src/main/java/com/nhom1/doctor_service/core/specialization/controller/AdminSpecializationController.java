@@ -70,11 +70,6 @@ public class AdminSpecializationController {
         return ResponseEntity.ok(specializationService.findById(specializationId));
     }
 
-    @GetMapping("/ids")
-    public ResponseEntity<List<Specialization>> findAllById(@PathVariable List<Long> specializationIds) {
-        return ResponseEntity.ok(specializationService.findAllById(specializationIds));
-    }
-
     @DeleteMapping("/{specializationId}")
     public ResponseEntity<Void> deleteById(@PathVariable Long specializationId) {
         specializationService.deleteById(specializationId);

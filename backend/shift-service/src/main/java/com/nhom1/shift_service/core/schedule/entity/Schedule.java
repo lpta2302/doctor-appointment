@@ -56,6 +56,20 @@ public class Schedule {
         scheduleId.setClinicId(clinicId);
     }
 
+    public void setShifts(List<Shift> shifts){
+        if (this.shifts == null) {
+            this.shifts = new ArrayList<>();
+        } else {
+            this.shifts.clear();
+        }
+
+        shifts.forEach(shift->{
+            this.shifts.add(shift);
+            shift.setSchedule(this);
+        });
+
+    }
+
     public void addShift(Shift newShift) {
         if (shifts == null) {
             shifts = new ArrayList<>();

@@ -3,3 +3,8 @@ spring:
     name: shift-service
   config:
     import: optional:configserver:${SPRING_CLOUD_CONFIG_URI:http://localhost:8888}
+
+application:
+  config:
+    doctor-url: http://${APPLICATION_CONFIG_DOCTORSERVICE:localhost:8222}/api/v1/server/doctors
+    clinic-url: http://${APPLICATION_CONFIG_DOCTORSERVICE:localhost:8222}/api/v1/server/clinics
