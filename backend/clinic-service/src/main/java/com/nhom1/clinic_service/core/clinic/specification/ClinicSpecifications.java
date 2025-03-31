@@ -21,21 +21,21 @@ public class ClinicSpecifications {
     }
     
     public static Specification<Clinic> haveIdEqual(String id){
-        return (root, _, criteriaBuilder) -> 
+        return (root, query, criteriaBuilder) -> 
             criteriaBuilder.equal(
                 root.get("id"), 
                 TypeCaster.castToNumber(root.get("id").getJavaType(), id));
     }
 
     public static Specification<Clinic> haveNameLike(String name){
-        return (root, _, criteriaBuilder) -> 
+        return (root, query, criteriaBuilder) -> 
             criteriaBuilder.like(
                 criteriaBuilder.lower(root.get("name")), 
                 "%" + name + "%");
     }
 
     public static Specification<Clinic> haveCodeEqual(String code){
-        return (root, _, criteriaBuilder) -> 
+        return (root, query, criteriaBuilder) -> 
             criteriaBuilder.equal(
                 criteriaBuilder.lower(root.get("code")), 
                 code);
@@ -63,7 +63,7 @@ public class ClinicSpecifications {
     }
 
     public static Specification<Clinic> haveSpecializationIdEqual(String specializationId) {
-        return (root, _, criteriaBuilder) -> 
+        return (root, query, criteriaBuilder) -> 
             criteriaBuilder.equal(
                 root.get("specializationId"), 
                 TypeCaster.castToNumber(
@@ -71,7 +71,7 @@ public class ClinicSpecifications {
     }
 
     public static Specification<Clinic> haveSpecializationIdEqual(Long specializationId) {
-        return (root, _, criteriaBuilder) -> 
+        return (root, query, criteriaBuilder) -> 
             criteriaBuilder.equal(
                 root.get("specializationId"), 
                 specializationId);

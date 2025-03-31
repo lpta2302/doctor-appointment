@@ -18,21 +18,21 @@ public class SpecializationSpecifications {
     }
     
     public static Specification<Specialization> haveIdEqual(String id){
-        return (root, _, criteriaBuilder) -> 
+        return (root, query, criteriaBuilder) -> 
             criteriaBuilder.equal(
                 root.get("id"), 
                 TypeCaster.castToNumber(root.get("id").getJavaType(), id));
     }
 
     public static Specification<Specialization> haveNameLike(String name){
-        return (root, _, criteriaBuilder) -> 
+        return (root, query, criteriaBuilder) -> 
             criteriaBuilder.like(
                 criteriaBuilder.lower(root.get("name")), 
                 "%"+name.toLowerCase()+"%");
     }
 
     public static Specification<Specialization> haveCodeEqual(String code){
-        return (root, _, criteriaBuilder) -> 
+        return (root, query, criteriaBuilder) -> 
             criteriaBuilder.equal(
                 criteriaBuilder.lower(root.get("code")), 
                 code.toLowerCase());

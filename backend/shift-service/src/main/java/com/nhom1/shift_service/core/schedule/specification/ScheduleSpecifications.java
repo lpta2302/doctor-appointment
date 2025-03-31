@@ -17,7 +17,7 @@ public class ScheduleSpecifications {
     }
     
     public static Specification<Schedule> haveClinicIdEqual(String clinicId){
-        return (root, _, criteriaBuilder) -> 
+        return (root, query, criteriaBuilder) -> 
             criteriaBuilder.equal(
                 root.get("scheduleId").get("clinicId"), 
                 TypeCaster.castToNumber(
@@ -26,7 +26,7 @@ public class ScheduleSpecifications {
     }
 
     public static Specification<Schedule> haveAppliedDate(String appliedDate){
-        return (root, _, criteriaBuilder) -> 
+        return (root, query, criteriaBuilder) -> 
             criteriaBuilder.equal(
                 root.get("scheduleId").get("clinicId"), 
                 TypeCaster.castToLocalDate(
