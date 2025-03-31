@@ -1,3 +1,5 @@
 config-server
 discovery-server
 gateway
+doctor-service
+clinic-service
