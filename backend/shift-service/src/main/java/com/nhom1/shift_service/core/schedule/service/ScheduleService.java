@@ -9,7 +9,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import com.nhom1.shift_service.common.PageResponse;
 import com.nhom1.shift_service.core.clinic.client.ClinicClient;
-import com.nhom1.shift_service.core.clinic.dto.ClinicResponse;
 import com.nhom1.shift_service.core.schedule.dto.ScheduleRequest;
 import com.nhom1.shift_service.core.schedule.dto.ScheduleResponse;
 import com.nhom1.shift_service.core.schedule.entity.Schedule;
@@ -49,14 +48,7 @@ public class ScheduleService {
     public Long addShift(Long clinicId, LocalDate appliedDate, ShiftRequest shiftRequest){
         Schedule schedule = findById(clinicId, appliedDate);
 
-        Shift newShift = 
-            Shift.builder()
-                .doctorId(shiftRequest.doctorId())
-                .startTime(shiftRequest.startTime())
-                .endTime(shiftRequest.endTime())
-                .build();
-
-        shiftService.addShift(schedule, newShift);
+        Shift newShift = shiftService.addShift(schedule, shiftRequest);
         
         scheduleRepository.save(schedule);
         scheduleRepository.flush();
@@ -87,20 +79,16 @@ public class ScheduleService {
         return scheduleRepository.save(schedule).getScheduleId();
     }
 
-    public Schedule findById(ScheduleId id){
-        return scheduleRepository.findById(id)
-        .orElseThrow(()->new EntityNotFoundException(
-            "not found schedule for clinic "+id.getClinicId()+
-            "of date "+id.getAppliedDate()));
-    }
-
     public Schedule findById(Long clinicId, LocalDate appliedDate){
         var id = ScheduleId.builder()
             .clinicId(clinicId)
             .appliedDate(appliedDate)
             .build();
 
-        return findById(id);
+        return scheduleRepository.findById(id)
+            .orElseThrow(()->new EntityNotFoundException(
+                "not found schedule for clinic "+id.getClinicId()+
+                "of date "+id.getAppliedDate()));
     }
     
     public ScheduleResponse findScheduleWithShiftDetailById(Long clinicId, LocalDate appliedDate){
@@ -136,8 +124,11 @@ public class ScheduleService {
     }
 
     private void validateSchedule(ScheduleRequest scheduleRequest) {
-        clinicClient.findById(scheduleRequest.clinicId())
-            .orElseThrow(()->new EntityNotFoundException("not found clinic with id: "+scheduleRequest.clinicId()));
+        var clinicCheckResponse = clinicClient.checkExistById(scheduleRequest.clinicId());
+        if (clinicCheckResponse.getStatusCode().is4xxClientError()) {
+            throw new EntityNotFoundException("not found clinic with id: "+scheduleRequest.clinicId());
+        }
+
         if (scheduleRequest.appliedDate().isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("Can't set schedule for a day before");
         }

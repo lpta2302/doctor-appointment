@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,6 +38,13 @@ public class Shift {
     @NotNull(message = "doctor id can't be null")
     @PositiveOrZero(message = "doctor id must be equal or greater than 0")
     private Long doctorId;
+
+    private String doctorCode;
+
+    private String doctorFullname;
+
+    @Pattern(regexp = "^(0)[0-9]{9}$", message = "Invalid phone number format")
+    private String doctorPhoneNumber;
 
     @NotNull
     private LocalTime startTime;

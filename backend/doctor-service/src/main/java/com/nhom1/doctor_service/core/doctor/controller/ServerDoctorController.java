@@ -17,9 +17,27 @@ import lombok.RequiredArgsConstructor;
 public class ServerDoctorController {
     private final DoctorService doctorService;
     
+    @GetMapping("/{doctorId}/exists")
+    public ResponseEntity<Void> checkById(@PathVariable Long doctorId) {
+        if (doctorService.checkById(doctorId)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
     @GetMapping("/{doctorId}")
     public ResponseEntity<Doctor> findById(@PathVariable Long doctorId) {
         return ResponseEntity.ok(doctorService.findById(doctorId));
+    }
+
+    @GetMapping("/ids/exist")
+    public ResponseEntity<Void> checkAllById(@RequestBody List<Long> doctorIds) {
+        if (doctorService.checkAllExistById(doctorIds)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/ids")
