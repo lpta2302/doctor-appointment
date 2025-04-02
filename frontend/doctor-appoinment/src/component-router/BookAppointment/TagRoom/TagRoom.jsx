@@ -11,7 +11,7 @@ const TagRoom = ({ roomName, examTime, doctorName, location }) => {
           <h3 className="room-name">{roomName}</h3>
           <p className="exam-time">🕒 {examTime}</p>
           <p className="doctor-name">👨‍⚕️ {doctorName}</p>
-          <p className="doctor-name">👨 Bệnh nhân: Chưa có bệnh nhân</p>
+          <p className="doctor-name">👨 Bệnh nhân: Họ tên bệnh nhân - Năm sinh</p>
         </Col>
 
         {/* Bên phải: Địa điểm phòng */}

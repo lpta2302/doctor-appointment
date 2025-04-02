@@ -7,8 +7,8 @@ import BookingAppointment from "./component-router/BookAppointment/BookingAppoin
 import LookingInformation from "./component-router/LookingInformation/LookingInformation.jsx";
 import Docter from "./component-router/Manage/Doctor/Doctor.jsx"
 import Room from "./component-router/Manage/Room/Room.jsx"
+import TimeAppointment from "./component-router/Manage/TimeAppointment/TimeAppointment.jsx"
 
-const EditSchedule = () => <p>Chỉnh sửa Lịch khám</p>;
 
 function App() {
   return (
@@ -33,7 +33,7 @@ function App() {
               {/* Các route mới */}
               <Route path="/quan-ly/bac-si" element={< Docter />} />
               <Route path="/quan-ly/phong-kham" element={<Room />} />
-              <Route path="/quan-ly/lich-kham" element={<EditSchedule />} />
+              <Route path="/quan-ly/lich-kham" element={<TimeAppointment />} />
             </Routes>
           </Col>
         </Row>
