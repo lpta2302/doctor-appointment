@@ -4,7 +4,7 @@ echo "🚀 Stop Docker Compose..."
 docker compose down
 
 echo "🏗️  Remove all services..."
-SERVICES=($(cat services.txt))
+SERVICES=($(cat services.txt | tr -d '\r'))
 
 for SERVICE in "${SERVICES[@]}"; do
   echo "🔨 Removing $SERVICE..."

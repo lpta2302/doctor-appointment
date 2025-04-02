@@ -6,4 +6,4 @@ spring:
 
 application:
   config:
-    admin-specialization-url: http://${APPLICATION_CONFIG_DOCTORSERVICE:localhost:8222}/api/v1/server/specializations
+    specialization-url: ${APPLICATION_CONFIG_DOCTORSERVICE:http://localhost:8222}/api/v1/server/specializations

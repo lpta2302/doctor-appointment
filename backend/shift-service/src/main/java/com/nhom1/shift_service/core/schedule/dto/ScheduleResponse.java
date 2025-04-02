@@ -9,5 +9,6 @@ import lombok.Builder;
 public record ScheduleResponse(
     Long clinicId,
     LocalDate appliedDate,
+    Long specializationId,
     List<ShiftResponse> shifts
 ) {}

@@ -23,7 +23,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "doctors")
+@Table(name = "clinics")
 public class Clinic {
     @Id
     @GeneratedValue

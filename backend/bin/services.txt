@@ -3,3 +3,4 @@ discovery-server
 gateway
 doctor-service
 clinic-service
+shift-service

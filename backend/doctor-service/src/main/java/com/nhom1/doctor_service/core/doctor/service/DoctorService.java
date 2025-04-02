@@ -56,9 +56,17 @@ public class DoctorService {
         return doctorRepository.save(doctor).getId();
     }
 
+    public boolean checkById(Long doctorId){
+        return doctorRepository.existsById(doctorId);
+    }
+    
     public Doctor findById(Long doctorId){
         return doctorRepository.findById(doctorId)
             .orElseThrow(()->new NotFoundException("Not found doctor with id: "+doctorId));
+    }
+
+    public boolean checkAllExistById(List<Long> doctorIds){
+        return doctorRepository.existAllById(doctorIds, doctorIds.size());
     }
 
     public List<Doctor> findAllById(List<Long> doctorIds){

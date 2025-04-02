@@ -20,19 +20,19 @@ public class DoctorSpecifications {
     }
     
     public static Specification<Doctor> haveIdEqual(String id){
-        return (root, _, criteriaBuilder) -> 
+        return (root, query, criteriaBuilder) -> 
             criteriaBuilder.equal(
                 root.get("id"), 
                 TypeCaster.castToNumber(root.get("id").getJavaType(), id));
     }
 
     public static Specification<Doctor> haveNameLike(String name){
-        Specification<Doctor> checkLastName = (root, _, criteriaBuilder) -> 
+        Specification<Doctor> checkLastName = (root, query, criteriaBuilder) -> 
             criteriaBuilder.like(
                 criteriaBuilder.lower(root.get("lastName")), 
                 name.toLowerCase()+"%");
 
-        Specification<Doctor> checkFullname = (root, _, criteriaBuilder) -> 
+        Specification<Doctor> checkFullname = (root, query, criteriaBuilder) -> 
         criteriaBuilder.like(
             criteriaBuilder.concat(
                 criteriaBuilder.concat(
@@ -45,14 +45,14 @@ public class DoctorSpecifications {
     }
 
     public static Specification<Doctor> haveCodeEqual(String code){
-        return (root, _, criteriaBuilder) -> 
+        return (root, query, criteriaBuilder) -> 
             criteriaBuilder.equal(
                 criteriaBuilder.lower(root.get("code")), 
                 code.toLowerCase());
     }
 
     public static Specification<Doctor> haveSpecialization(String specificationId){
-        return (root, _, criteriaBuilder) ->{ 
+        return (root, query, criteriaBuilder) ->{ 
             Join<Object, Object> specializations = root.join("specializations");
             
             return criteriaBuilder.equal(

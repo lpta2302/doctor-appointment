@@ -1,15 +1,15 @@
 package com.nhom1.shift_service.core.shift.service;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.NavigableSet;
+import java.util.Set;
 import java.util.TreeSet;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
-import com.nhom1.shift_service.common.PageResponse;
 import com.nhom1.shift_service.core.doctor.client.DoctorClient;
 import com.nhom1.shift_service.core.doctor.dto.DoctorResponse;
 import com.nhom1.shift_service.core.schedule.entity.Schedule;
@@ -31,16 +31,23 @@ public class ShiftService {
 
     public List<Shift> createShifts(List<ShiftRequest> shiftRequests) {
         validateShifts(shiftRequests);
+        Map<Long, DoctorResponse> doctors = new HashMap<>();
+        
+        doctorClient.findAllById(shiftRequests
+            .stream()
+            .map(s->s.doctorId())
+            .collect(Collectors.toSet()))
+            .forEach(d->
+                doctors.put(d.id(), d));
+
         final NavigableSet<Shift> newShifts = new TreeSet<>(
             (s1, s2) -> s1.getStartTime().compareTo(s2.getStartTime())
         );
 
         shiftRequests.forEach(shiftRequest->{
-            Shift newShift = Shift.builder()
-                .doctorId(shiftRequest.doctorId())
-                .startTime(shiftRequest.startTime())
-                .endTime(shiftRequest.endTime())
-                .build();
+            DoctorResponse doctor = doctors.get(shiftRequest.doctorId());
+
+            Shift newShift = shiftMapper.convertShiftFrom(shiftRequest, doctor);
 
             
             Shift lower = newShifts.lower(newShift);
@@ -57,12 +64,17 @@ public class ShiftService {
         return newShifts.stream().toList();
     }
 
-    public void addShift(Schedule schedule, Shift newShift) {
-        validateShift(newShift);
+    public Shift addShift(Schedule schedule, ShiftRequest shiftRequest) {
+        validateShift(shiftRequest);
+        DoctorResponse doctorResponse = doctorClient.findById(shiftRequest.doctorId())
+            .orElseThrow(()->new EntityNotFoundException("not found doctor with ID: "+shiftRequest.doctorId()));
+
+        Shift newShift = shiftMapper.convertShiftFrom(shiftRequest, doctorResponse);
+
         List<Shift> shifts = schedule.getShifts();
         if (shifts == null || shifts.isEmpty()) {
             schedule.addShift(newShift);
-            return;
+            return newShift;
         }
 
         int iNearestShift = findNearestShift(shifts, newShift);
@@ -75,11 +87,30 @@ public class ShiftService {
         }
 
         schedule.insertShift(iNearestShift + 1, newShift);
+        
+        return newShift;
     }
 
     public void update(Schedule schedule, Shift updatingShift, ShiftRequest shiftRequest){
-        validateShift(updatingShift);
-        updatingShift.setDoctorId(shiftRequest.doctorId());
+        validateShift(shiftRequest);
+
+        if (shiftRequest.doctorId() != updatingShift.getDoctorId()) {
+            DoctorResponse doctorResponse = 
+                doctorClient.findById(shiftRequest.doctorId())
+                .orElseThrow(()-> new EntityNotFoundException(
+                    "not found doctor with id: "  + shiftRequest.doctorId()
+                ));
+            updatingShift.setDoctorId(shiftRequest.doctorId());
+            updatingShift.setDoctorCode(doctorResponse.code());
+            updatingShift.setDoctorFullname(doctorResponse.fullname());
+            updatingShift.setDoctorPhoneNumber(doctorResponse.phoneNumber());
+        }
+
+        if (updatingShift.getStartTime().equals(shiftRequest.startTime())
+        && updatingShift.getEndTime().equals(shiftRequest.endTime())) {
+            return;
+        }
+        
 
         List<Shift> shifts = schedule.getShifts();
         int iUpdatingShift = shifts.indexOf(updatingShift);
@@ -96,14 +127,50 @@ public class ShiftService {
         }
     }
 
-    public PageResponse<ShiftResponse> findAll(Pageable pageable) {
-        Page<Shift> pageResult = shiftRepository.findAll(pageable);
-        return PageResponse.fromPage(
-            pageResult, 
-            pageResult.getContent().stream()
-                .map(shiftMapper::convertShiftResponseFrom)
-                .toList()
+    public List<ShiftResponse> findAllBySchedule(Schedule schedule) {
+        List<Shift> shifts = shiftRepository.findAllBySchedule(schedule);
+        
+        Set<Long> doctorIds = new HashSet<>();
+        shifts.stream().map(shift->shift.getDoctorId()).forEach(
+            doctorId->doctorIds.add(doctorId)
         );
+        List<DoctorResponse> doctors = doctorClient.findAllById(doctorIds);
+
+        return shifts.stream().map(shift->
+            ShiftResponse.builder()
+                .id(shift.getId())
+                .doctor(doctors.stream()
+                    .filter(doctor->doctor.id() == shift.getDoctorId())
+                    .findFirst()
+                    .orElseThrow(()-> new EntityNotFoundException("not found doctor with id: " +
+                        shift.getDoctorId())))
+                .endTime(shift.getEndTime())
+                .startTime(shift.getStartTime())
+                .build()
+        ).toList();
+    }
+    
+    public List<ShiftResponse> findAllBySchedules(List<Schedule> schedules) {
+        List<Shift> shifts = shiftRepository.findAllBySchedules(schedules);
+        
+        Set<Long> doctorIds = new HashSet<>();
+        shifts.stream().map(shift->shift.getDoctorId()).forEach(
+            doctorId->doctorIds.add(doctorId)
+        );
+        List<DoctorResponse> doctors = doctorClient.findAllById(doctorIds);
+
+        return shifts.stream().map(shift->
+            ShiftResponse.builder()
+                .id(shift.getId())
+                .doctor(doctors.stream()
+                    .filter(doctor->doctor.id() == shift.getDoctorId())
+                    .findFirst()
+                    .orElseThrow(()-> new EntityNotFoundException("not found doctor with id: " +
+                        shift.getDoctorId())))
+                .endTime(shift.getEndTime())
+                .startTime(shift.getStartTime())
+                .build()
+        ).toList();
     }
 
     private int findNearestShift(List<Shift> shifts, Shift targetShift){
@@ -133,36 +200,28 @@ public class ShiftService {
 
     private boolean isOverlappingShift(Shift shift1, Shift shift2){
         return !(shift1.getStartTime().isAfter(shift2.getEndTime())
-            || shift1.getEndTime().isBefore(shift1.getStartTime()));
+            || shift1.getStartTime().equals(shift2.getEndTime())
+            || shift1.getEndTime().isBefore(shift1.getStartTime())
+            || shift1.getEndTime().equals(shift2.getStartTime()));
     }
 
-    public void validateShift(Shift shift){
-        if (shift.getStartTime().isAfter(shift.getEndTime())) {
+    public void validateShift(ShiftRequest shift){
+        if (shift.startTime().isAfter(shift.endTime())) {
             throw new IllegalArgumentException("shift end time before start time");
         }
-
-        doctorClient.findById(shift.getDoctorId());
     }
 
     public void validateShifts(List<ShiftRequest> shifts){
-        List<Long> doctorIds = new ArrayList<>();
         for (ShiftRequest shift : shifts) {
-            if (shift.startTime().isAfter(shift.endTime())) {
-                throw new IllegalArgumentException("shift end time before start time");
-            }
-            doctorIds.add(shift.doctorId());
-        }
-        List<Long> foundDoctorIds = doctorClient.findAllById(doctorIds)
-            .stream().map(DoctorResponse::id).toList();
-
-        if (!foundDoctorIds.containsAll(doctorIds)) {
-            throw new IllegalArgumentException("Some doctor ids not found");
+            validateShift(shift);
         }
     }
 
-    public List<ShiftResponse> findAllBySchedule(Schedule schedule) {
-        List<Long> doctorIds = new ArrayList<>();
-        List<Shift> shifts = shiftRepository.findAllBySchedule(schedule);
+    public List<ShiftResponse> convertToShiftResponses(List<Shift> shifts) {
+        Set<Long> doctorIds = new HashSet<>();
+        shifts.stream().map(shift->shift.getDoctorId()).forEach(
+            doctorId->doctorIds.add(doctorId)
+        );
         List<DoctorResponse> doctors = doctorClient.findAllById(doctorIds);
 
         return shifts.stream().map(shift->
@@ -178,5 +237,4 @@ public class ShiftService {
                 .build()
         ).toList();
     }
-    
 }

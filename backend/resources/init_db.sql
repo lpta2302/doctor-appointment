@@ -1,3 +1,5 @@
 CREATE DATABASE doctor_db;
 CREATE DATABASE clinic_db;
 CREATE DATABASE shift_db;
+CREATE DATABASE appointment_db;
+CREATE DATABASE patient_db;

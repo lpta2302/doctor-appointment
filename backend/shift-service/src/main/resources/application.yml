@@ -6,5 +6,5 @@ spring:
 
 application:
   config:
-    doctor-url: http://${APPLICATION_CONFIG_DOCTORSERVICE:localhost:8222}/api/v1/server/doctors
-    clinic-url: http://${APPLICATION_CONFIG_DOCTORSERVICE:localhost:8222}/api/v1/server/clinics
+    doctor-url: ${APPLICATION_CONFIG_DOCTORSERVICE:http://localhost:8222}/api/v1/server/doctors
+    clinic-url: ${APPLICATION_CONFIG_CLINICSERVICE:http://localhost:8222}/api/v1/server/clinics
