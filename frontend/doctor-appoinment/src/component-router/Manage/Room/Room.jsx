@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import "./Room.css";
 import RoomListTag from "../Room/RoomListTag/RoomListTag.jsx";
+import Footer from "../../../Footer/Footer.jsx";
 
+// Fake data
 const initialClinics = [
   { name: "Phòng khám Đa khoa An Bình", address: "123 Đường Lê Lợi, Quận 1, TP.HCM", specialty: "Đa khoa" },
   { name: "Phòng khám Nhi Đồng Hạnh Phúc", address: "45 Đường Trần Hưng Đạo, Quận 5, TP.HCM", specialty: "Nhi khoa" },
@@ -58,69 +60,72 @@ const Room = () => {
   );
 
   return (
-    <div className="clinic-container">
-      <div className="clinic-left">
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="🔍 Tìm kiếm phòng khám..."
-            value={searchTerm}
-            onChange={handleSearch}
-            className="search-input"
-          />
-        </div>
+    <div className="page-container">
+      <div className="clinic-container">
+        <div className="clinic-left">
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="🔍 Tìm kiếm phòng khám..."
+              value={searchTerm}
+              onChange={handleSearch}
+              className="search-input"
+            />
+          </div>
 
-        <hr className="divider" />
+          <hr className="divider" />
 
-        <div className="clinic-form">
-          <h4>Thông tin phòng khám</h4>
-          <input
-            type="text"
-            name="name"
-            placeholder="Tên phòng khám"
-            value={form.name}
-            onChange={handleChange}
-          />
-          <input
-            type="text"
-            name="address"
-            placeholder="Địa chỉ"
-            value={form.address}
-            onChange={handleChange}
-          />
-          <input
-            type="text"
-            name="specialty"
-            placeholder="Chuyên khoa"
-            value={form.specialty}
-            onChange={handleChange}
-          />
+          <div className="clinic-form">
+            <h4>Thông tin phòng khám</h4>
+            <input
+              type="text"
+              name="name"
+              placeholder="Tên phòng khám"
+              value={form.name}
+              onChange={handleChange}
+            />
+            <input
+              type="text"
+              name="address"
+              placeholder="Địa chỉ"
+              value={form.address}
+              onChange={handleChange}
+            />
+            <input
+              type="text"
+              name="specialty"
+              placeholder="Chuyên khoa"
+              value={form.specialty}
+              onChange={handleChange}
+            />
 
-          <div className="button-group">
-            <button onClick={handleAdd} disabled={selectedIndex !== null}>
-              Thêm
-            </button>
-            <button onClick={handleEdit} disabled={selectedIndex === null}>
-              Sửa
-            </button>
-            <button onClick={handleDelete} disabled={selectedIndex === null}>
-              Xóa
-            </button>
+            <div className="button-group">
+              <button onClick={handleAdd} disabled={selectedIndex !== null}>
+                Thêm
+              </button>
+              <button onClick={handleEdit} disabled={selectedIndex === null}>
+                Sửa
+              </button>
+              <button onClick={handleDelete} disabled={selectedIndex === null}>
+                Xóa
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="clinic-list">
-        <h4>Danh sách phòng khám</h4>
-        {filteredClinics.map((clinic, index) => (
-          <RoomListTag
-            key={index}
-            clinic={clinic}
-            onSelect={() => handleSelect(index)}
-            isSelected={selectedIndex === index}
-          />
-        ))}
+        <div className="clinic-list">
+          <h4>Danh sách phòng khám</h4>
+          {filteredClinics.map((clinic, index) => (
+            <RoomListTag
+              key={index}
+              clinic={clinic}
+              onSelect={() => handleSelect(index)}
+              isSelected={selectedIndex === index}
+            />
+          ))}
+        </div>
       </div>
+      <Footer />
     </div>
   );
 };

@@ -1,44 +1,40 @@
-
 .booking-container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    background-color: #f3f4f6;
-  }
-  
-  .booking-box {
-    width: 95%;
-    max-width: 1200px;
-    background: rgb(255, 255, 255);
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .booking-form h2 {
-    font-size: 22px;
-    color: #333;
-    margin-bottom: 15px;
-  }
-  
-  .booking-info {
-    display: flex;
-    align-items: flex-start; 
-    justify-content: flex-start;
-    height: 100%;
+  min-height: 100vh; /* Chiếm toàn bộ chiều cao màn hình */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Trải dài nội dung */
+  background-color: #f3f4f6;
+  padding-top: 10px;
 }
 
-  
-  .footer {
-    width: 100%;
-    text-align: center;
-    padding: 15px;
-    background-color: #fff;
-    border-top: 1px solid #ddd;
-    position: relative;
-    bottom: 0;
-  }
-  
+.booking-box {
+  flex-grow: 1; /* Giúp phần này mở rộng để chạm footer */
+  width: 95%;
+  max-width: 1200px;
+  background: rgb(255, 255, 255);
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-top: 0px; /* Sát header */
+}
+
+.booking-form h2 {
+  font-size: 22px;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.booking-info {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  height: 100%;
+}
+
+.footer {
+  width: 100%;
+  text-align: center;
+  padding: 15px;
+  background-color: #fff;
+  border-top: 1px solid #ddd;
+}

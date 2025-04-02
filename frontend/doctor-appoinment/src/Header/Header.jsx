@@ -24,7 +24,6 @@ const Header = () => {
         <Nav className="nav-links d-flex justify-content-center">
           <NavLink to="/dat-lich-hen" className="nav-item">ĐẶT LỊCH HẸN</NavLink>
           <NavLink to="/thong-tin" className="nav-item">TRA CỨU THÔNG TIN</NavLink>
-          <NavLink to="/thong-ke" className="nav-item">THỐNG KÊ</NavLink>
           
           {/* Dropdown Chỉnh Sửa */}
           <NavDropdown title="QUẢN LÝ" id="basic-nav-dropdown">

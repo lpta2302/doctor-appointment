@@ -1,44 +1,52 @@
-.clinic-container {
+/* Đảm bảo footer luôn ở dưới cùng */
+.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Chiều cao tối thiểu bằng chiều cao viewport */
+  }
+  
+  .clinic-container {
     display: flex;
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    padding-top: 20px; /* Thêm khoảng cách phía trên */
-}
+    padding-top: 20px;
+    flex: 1; /* Đảm bảo clinic-container chiếm không gian còn lại trừ footer */
+  }
   
-/* Bên trái chứa tìm kiếm + form */
-.clinic-left {
+  /* Bên trái chứa tìm kiếm + form */
+  .clinic-left {
     width: 50%;
     display: flex;
     flex-direction: column;
     padding-right: 10px;
-    padding-top: 20px; /* Thêm khoảng cách phía trên */
-}
+    padding-top: 20px;
+  }
   
-/* Ô tìm kiếm */
-.search-container {
+  /* Ô tìm kiếm */
+  .search-container {
     width: 100%;
     margin-bottom: 10px;
-}
+  }
   
-.search-input {
+  .search-input {
     width: 100%;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
-}
+  }
   
-/* Đường phân cách */
-.divider {
+  /* Đường phân cách */
+  .divider {
     border: 0;
     height: 1px;
     background: #ccc;
     margin: 10px 0;
-}
+  }
   
-/* Form phòng khám */
-.clinic-form {
+  /* Form phòng khám */
+  .clinic-form {
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -46,21 +54,21 @@
     border: 1px solid #ddd;
     border-radius: 8px;
     background: #f9f9f9;
-}
+  }
   
-.clinic-form input {
+  .clinic-form input {
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
-}
+  }
   
-.button-group {
+  .button-group {
     display: flex;
     justify-content: space-between;
-}
+  }
   
-.button-group button {
+  .button-group button {
     flex: 1;
     padding: 8px;
     margin: 0 5px;
@@ -68,21 +76,33 @@
     border-radius: 4px;
     font-size: 14px;
     cursor: pointer;
-    background: #007bff;
+    background: #00c4cc; /* Màu xanh đơn giản */
     color: white;
-}
+  }
   
-.button-group button:disabled {
-    background: #ccc;
+  .button-group button:disabled {
+    background: #b0e7e9; /* Màu xanh nhạt hơn khi bị làm mờ */
+    opacity: 0.6;
     cursor: not-allowed;
-}
+  }
   
-/* Bên phải chứa danh sách phòng khám */
-.clinic-list {
+  /* Bên phải chứa danh sách phòng khám */
+  .clinic-list {
     width: 50%;
     padding: 10px;
-    padding-top: 20px; /* Thêm khoảng cách phía trên */
+    padding-top: 20px;
     border: 1px solid #ddd;
     border-radius: 8px;
     background: #f9f9f9;
-}
+    max-height: 500px;
+    overflow-y: auto;
+  }
+  
+  /* Footer */
+  footer {
+    width: 100%;
+    text-align: center;
+    padding: 15px;
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+  }

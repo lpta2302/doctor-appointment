@@ -7,7 +7,7 @@ import TagRoom from "../../component-router/BookAppointment/TagRoom/TagRoom.jsx"
 const BookingAppointment = () => {
   return (
     <Container fluid className="booking-container">
-      <Row className="justify-content-center align-items-center vh-100">
+      <Row className="justify-content-center align-items-start flex-grow-1">
         <Col xs={12} md={10} lg={8} className="booking-box p-4">
           <Row>
             {/* Phần nhập thông tin bệnh nhân */}
@@ -40,7 +40,9 @@ const BookingAppointment = () => {
                 </Form.Group>
 
                 {/* Button đặt lịch */}
-                <Button variant="primary" className="w-100 mt-3">Đặt lịch hẹn</Button>
+                <Button variant="primary" className="w-100 mt-3">
+                  Đặt lịch hẹn
+                </Button>
               </Form>
             </Col>
 

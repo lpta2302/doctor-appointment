@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import "./Doctor.css";
 import DoctorTag from "../Doctor/DocterTag/DoctorTag.jsx";
+import Footer from "../../../Footer/Footer.jsx";
 
+// Danh sách bác sĩ ban đầu
 const initialDoctors = [
   { name: "Nguyễn Văn A", birthYear: "1980", specialty: "Tim mạch" },
   { name: "Trần Thị B", birthYear: "1985", specialty: "Nhi khoa" },
@@ -16,20 +18,27 @@ const initialDoctors = [
 ];
 
 const Doctor = () => {
+  // Quản lý trạng thái danh sách bác sĩ
   const [doctors, setDoctors] = useState(initialDoctors);
+  // Quản lý trạng thái form nhập liệu
   const [form, setForm] = useState({ name: "", birthYear: "", specialty: "" });
+  // Quản lý trạng thái tìm kiếm
   const [searchTerm, setSearchTerm] = useState("");
+  // Quản lý chỉ số bác sĩ được chọn
   const [selectedIndex, setSelectedIndex] = useState(null);
 
+  // Xử lý thay đổi giá trị trong form
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
 
+  // Xử lý tìm kiếm bác sĩ
   const handleSearch = (e) => {
     setSearchTerm(e.target.value.toLowerCase());
   };
 
+  // Thêm bác sĩ mới
   const handleAdd = () => {
     if (!form.name || !form.birthYear || !form.specialty) return;
     setDoctors([...doctors, form]);
@@ -37,6 +46,7 @@ const Doctor = () => {
     setSelectedIndex(null);
   };
 
+  // Sửa thông tin bác sĩ
   const handleEdit = () => {
     if (selectedIndex === null) return;
     const updated = [...doctors];
@@ -46,6 +56,7 @@ const Doctor = () => {
     setSelectedIndex(null);
   };
 
+  // Xóa bác sĩ
   const handleDelete = () => {
     if (selectedIndex === null) return;
     setDoctors(doctors.filter((_, idx) => idx !== selectedIndex));
@@ -53,84 +64,92 @@ const Doctor = () => {
     setSelectedIndex(null);
   };
 
+  // Chọn bác sĩ để chỉnh sửa
   const handleSelect = (index) => {
     setForm(doctors[index]);
     setSelectedIndex(index);
   };
 
+  // Lọc danh sách bác sĩ theo từ khóa tìm kiếm
   const filteredDoctors = doctors.filter((doc) =>
     doc.name.toLowerCase().includes(searchTerm)
   );
 
   return (
-    <div className="doctor-container">
-      {/* Bên trái chứa tìm kiếm + form */}
-      <div className="doctor-left">
-        {/* Ô tìm kiếm */}
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="🔍 Tìm kiếm bác sĩ..."
-            value={searchTerm}
-            onChange={handleSearch}
-            className="search-input"
-          />
-        </div>
+    <div className="page-container">
+      {/* Nội dung chính */}
+      <div className="doctor-container">
+        {/* Bên trái chứa tìm kiếm + form */}
+        <div className="doctor-left">
+          {/* Ô tìm kiếm */}
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="🔍 Tìm kiếm bác sĩ..."
+              value={searchTerm}
+              onChange={handleSearch}
+              className="search-input"
+            />
+          </div>
 
-        {/* Đường phân cách */}
-        <hr className="divider" />
+          {/* Đường phân cách */}
+          <hr className="divider" />
 
-        {/* Form nhập bác sĩ */}
-        <div className="doctor-form">
-          <h4>Thông tin bác sĩ</h4>
-          <input
-            type="text"
-            name="name"
-            placeholder="Tên bác sĩ"
-            value={form.name}
-            onChange={handleChange}
-          />
-          <input
-            type="number"
-            name="birthYear"
-            placeholder="Năm sinh"
-            value={form.birthYear}
-            onChange={handleChange}
-          />
-          <input
-            type="text"
-            name="specialty"
-            placeholder="Chuyên khoa"
-            value={form.specialty}
-            onChange={handleChange}
-          />
+          {/* Form nhập bác sĩ */}
+          <div className="doctor-form">
+            <h4>Thông tin bác sĩ</h4>
+            <input
+              type="text"
+              name="name"
+              placeholder="Tên bác sĩ"
+              value={form.name}
+              onChange={handleChange}
+            />
+            <input
+              type="number"
+              name="birthYear"
+              placeholder="Năm sinh"
+              value={form.birthYear}
+              onChange={handleChange}
+            />
+            <input
+              type="text"
+              name="specialty"
+              placeholder="Chuyên khoa"
+              value={form.specialty}
+              onChange={handleChange}
+            />
 
-          <div className="button-group">
-            <button onClick={handleAdd} disabled={selectedIndex !== null}>
-              Thêm
-            </button>
-            <button onClick={handleEdit} disabled={selectedIndex === null}>
-              Sửa
-            </button>
-            <button onClick={handleDelete} disabled={selectedIndex === null}>
-              Xóa
-            </button>
+            <div className="button-group">
+              <button onClick={handleAdd} disabled={selectedIndex !== null}>
+                Thêm
+              </button>
+              <button onClick={handleEdit} disabled={selectedIndex === null}>
+                Sửa
+              </button>
+              <button onClick={handleDelete} disabled={selectedIndex === null}>
+                Xóa
+              </button>
+            </div>
           </div>
         </div>
+
+        {/* Bên phải chứa danh sách bác sĩ */}
+        <div className="doctor-list">
+          <h4>Danh sách bác sĩ</h4>
+          {filteredDoctors.map((doc, index) => (
+            <DoctorTag
+              key={index}
+              doctor={doc}
+              onSelect={() => handleSelect(index)}
+              isSelected={selectedIndex === index}
+            />
+          ))}
+        </div>
       </div>
 
-      {/* Bên phải chứa danh sách bác sĩ */}
-      <div className="doctor-list">
-        <h4>Danh sách bác sĩ</h4>
-        {filteredDoctors.map((doc, index) => (
-          <DoctorTag
-            key={index}
-            doctor={doc}
-            onSelect={() => handleSelect(index)}
-            isSelected={selectedIndex === index}
-          />
-        ))}
-      </div>
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

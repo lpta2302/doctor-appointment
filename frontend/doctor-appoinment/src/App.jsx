@@ -28,7 +28,6 @@ function App() {
               <Route path="/" element={<Wellcome />} />
               <Route path="/dat-lich-hen" element={<BookingAppointment />} />
               <Route path="/thong-tin" element={<LookingInformation />} />
-              <Route path="/thong-ke" element={<p>THỐNG KÊ</p>} />
 
               {/* Các route mới */}
               <Route path="/quan-ly/bac-si" element={< Docter />} />
