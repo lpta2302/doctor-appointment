@@ -149,6 +149,29 @@ public class ShiftService {
                 .build()
         ).toList();
     }
+    
+    public List<ShiftResponse> findAllBySchedules(List<Schedule> schedules) {
+        List<Shift> shifts = shiftRepository.findAllBySchedules(schedules);
+        
+        Set<Long> doctorIds = new HashSet<>();
+        shifts.stream().map(shift->shift.getDoctorId()).forEach(
+            doctorId->doctorIds.add(doctorId)
+        );
+        List<DoctorResponse> doctors = doctorClient.findAllById(doctorIds);
+
+        return shifts.stream().map(shift->
+            ShiftResponse.builder()
+                .id(shift.getId())
+                .doctor(doctors.stream()
+                    .filter(doctor->doctor.id() == shift.getDoctorId())
+                    .findFirst()
+                    .orElseThrow(()-> new EntityNotFoundException("not found doctor with id: " +
+                        shift.getDoctorId())))
+                .endTime(shift.getEndTime())
+                .startTime(shift.getStartTime())
+                .build()
+        ).toList();
+    }
 
     private int findNearestShift(List<Shift> shifts, Shift targetShift){
         int iLeft = 0;
@@ -192,5 +215,26 @@ public class ShiftService {
         for (ShiftRequest shift : shifts) {
             validateShift(shift);
         }
+    }
+
+    public List<ShiftResponse> convertToShiftResponses(List<Shift> shifts) {
+        Set<Long> doctorIds = new HashSet<>();
+        shifts.stream().map(shift->shift.getDoctorId()).forEach(
+            doctorId->doctorIds.add(doctorId)
+        );
+        List<DoctorResponse> doctors = doctorClient.findAllById(doctorIds);
+
+        return shifts.stream().map(shift->
+            ShiftResponse.builder()
+                .id(shift.getId())
+                .doctor(doctors.stream()
+                    .filter(doctor->doctor.id() == shift.getDoctorId())
+                    .findFirst()
+                    .orElseThrow(()-> new EntityNotFoundException("not found doctor with id: " +
+                        shift.getDoctorId())))
+                .endTime(shift.getEndTime())
+                .startTime(shift.getStartTime())
+                .build()
+        ).toList();
     }
 }

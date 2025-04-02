@@ -51,7 +51,7 @@ public class DoctorMapper {
             .code(doctor.getCode())
             .firstName(doctor.getFirstName())
             .lastName(doctor.getLastName())
-            .fullName(doctor.getFullName())
+            .fullname(doctor.getFullname())
             .gender(doctor.getGender())
             .description(doctor.getDescription())
             .phoneNumber(doctor.getPhoneNumber())

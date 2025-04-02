@@ -10,7 +10,7 @@ public record DoctorResponse(
     String code,
     String firstName,    
     String lastName,
-    String fullName,
+    String fullname,
     Gender gender,
     String description,
     String phoneNumber,

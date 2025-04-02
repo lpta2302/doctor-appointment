@@ -2,6 +2,7 @@ package com.nhom1.shift_service.core.schedule.entity;
 
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
 import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.FetchType.EAGER;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,7 +38,10 @@ public class Schedule {
     @JsonIgnore
     private Long version;
 
-    @OneToMany(mappedBy = "schedule", cascade = ALL, orphanRemoval = true)
+    @PositiveOrZero(message = "doctor id must be equal or greater than 0")
+    private Long specializationId;
+
+    @OneToMany(mappedBy = "schedule", cascade = ALL, orphanRemoval = true, fetch = EAGER)
     @OrderBy("startTime ASC")
     private List<Shift> shifts;
 

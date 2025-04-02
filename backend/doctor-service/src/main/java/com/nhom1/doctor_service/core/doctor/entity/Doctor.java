@@ -84,7 +84,7 @@ public class Doctor {
     private Integer yearsOfExperience;
 
     @Schema(accessMode=READ_ONLY)
-    public String getFullName(){
+    public String getFullname(){
         return firstName + " " + lastName;
     }
 

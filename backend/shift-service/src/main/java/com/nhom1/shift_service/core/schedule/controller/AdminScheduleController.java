@@ -73,6 +73,14 @@ public class AdminScheduleController {
     ) {
         return ResponseEntity.ok(scheduleService.findScheduleWithShiftDetailById(clinicId,appliedDate));
     }
+
+    @GetMapping("/{appliedDate}/specializations/{specializationId}")
+    public ResponseEntity<List<ScheduleResponse>> findBySpecialization(
+        Long specializationId,
+        LocalDate appliedDate
+    ) {
+        return ResponseEntity.ok(scheduleService.findScheduleWithShiftDetailBySpecialization(specializationId,appliedDate));
+    }
     
     @DeleteMapping("/{clinicId}/{appliedDate}")
     public ResponseEntity<Void> deleteById(

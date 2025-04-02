@@ -41,6 +41,14 @@ spring:
           uri: lb://CLINIC-SERVICE
           predicates:
             - Path=/api/v1/server/clinics/**
+        - id: admin-shift-service
+          uri: lb://SHIFT-SERVICE
+          predicates:
+            - Path=/api/v1/admin/schedules/**
+        - id: shift-service
+          uri: lb://SHIFT-SERVICE
+          predicates:
+            - Path=/api/v1/schedules/**
 
 eureka:
   client:
