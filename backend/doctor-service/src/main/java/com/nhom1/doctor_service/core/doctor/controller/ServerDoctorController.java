@@ -5,10 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.nhom1.doctor_service.core.doctor.entity.Doctor;
 import com.nhom1.doctor_service.core.doctor.service.DoctorService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -32,7 +33,7 @@ public class ServerDoctorController {
     }
 
     @GetMapping("/ids/exist")
-    public ResponseEntity<Void> checkAllById(@RequestBody List<Long> doctorIds) {
+    public ResponseEntity<Void> checkAllById(@RequestParam List<Long> doctorIds) {
         if (doctorService.checkAllExistById(doctorIds)) {
             return ResponseEntity.ok().build();
         } else {
@@ -41,7 +42,7 @@ public class ServerDoctorController {
     }
 
     @GetMapping("/ids")
-    public ResponseEntity<List<Doctor>> findAllById(@RequestBody List<Long> doctorIds) {
+    public ResponseEntity<List<Doctor>> findAllById(@RequestParam List<Long> doctorIds) {
         return ResponseEntity.ok(doctorService.findAllById(doctorIds));
     }
 }

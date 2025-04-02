@@ -113,7 +113,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/clinic_db
       - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
-      - APPLICATION_CONFIG_DOCTORSERVICE=http://doctor-service:8222
+      - APPLICATION_CONFIG_DOCTORSERVICE=http://doctor-service:8070
     depends_on:
       postgres:
         condition: service_healthy
