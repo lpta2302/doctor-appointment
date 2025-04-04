@@ -48,6 +48,7 @@ public class DoctorMapper {
             doctor.getSpecializations().stream().map(Specialization::getName).toList();
 
         return DoctorResponse.builder()
+            .id(doctor.getId())
             .code(doctor.getCode())
             .firstName(doctor.getFirstName())
             .lastName(doctor.getLastName())

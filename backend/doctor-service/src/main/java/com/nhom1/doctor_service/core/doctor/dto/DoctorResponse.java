@@ -7,6 +7,7 @@ import lombok.Builder;
 
 @Builder
 public record DoctorResponse(
+    Long id,
     String code,
     String firstName,    
     String lastName,
