@@ -4,3 +4,4 @@ gateway
 doctor-service
 clinic-service
 shift-service
+appointment-service

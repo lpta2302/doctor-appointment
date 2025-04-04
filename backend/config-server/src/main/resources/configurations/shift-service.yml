@@ -18,3 +18,8 @@ server:
   port: 8072
   servlet:
     context-path: /api/v1
+
+application:
+  config:
+    doctor-url: ${APPLICATION_CONFIG_DOCTORSERVICE:http://localhost:8222}/api/v1/server/doctors
+    clinic-url: ${APPLICATION_CONFIG_CLINICSERVICE:http://localhost:8222}/api/v1/server/clinics

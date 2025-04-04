@@ -31,33 +31,33 @@ services:
       - postgres
     networks:
       - app_net
-  # zookeeper:
-  #   image: confluentinc/cp-zookeeper:latest
-  #   restart: unless_stopped
-  #   container_name: zookeeper
-  #   ports:
-  #     - 2181:2181
-  #   environment:
-  #     ZOO_MY_ID: 1
-  #     ZOOKEEPER_CLIENT_PORT: 2181
-  #   networks:
-  #     - app_net
-  # kafka:
-  #   image: confluentinc/cp-kafka:latest
-  #   container_name: kafka
-  #   ports:
-  #     - "9092:9092"
-  #   depends_on:
-  #     - zookeeper
-  #   environment:
-  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-  #     KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-  #     KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-  #   networks:
-  #     - app_net
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    restart: unless-stopped
+    container_name: zookeeper
+    ports:
+      - 2181:2181
+    environment:
+      ZOO_MY_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - app_net
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+    networks:
+      - app_net
   
   config-server:
     build: ./config-server
@@ -143,6 +143,27 @@ services:
         condition: service_healthy
     ports:
       - 8072:8072
+    networks:
+      - app_net
+  appointment-service:
+    build: ./appointment-service
+    container_name: appointment-service
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/appointment_db
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
+      - APPLICATION_CONFIG_DOCTORSERVICE=http://doctor-service:8070
+      - APPLICATION_CONFIG_CLINICSERVICE=http://clinic-service:8071
+      - APPLICATION_CONFIG_SHIFTSERVICE=http://clinic-service:8072
+    depends_on:
+      postgres:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+    ports:
+      - 8073:8073
     networks:
       - app_net
   gateway:

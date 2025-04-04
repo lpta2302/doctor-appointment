@@ -63,6 +63,16 @@
             "projectName": "shift-service",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-AppointmentServiceApplication<appointment-service>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.nhom1.appointment_service.AppointmentServiceApplication",
+            "projectName": "appointment-service",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }
