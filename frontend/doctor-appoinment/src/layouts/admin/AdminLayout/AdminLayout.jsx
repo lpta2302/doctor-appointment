@@ -4,7 +4,7 @@ const AdminLayout = ({ children }) => {
     return (
         <>
             <AdminHeader />
-            <div className="" style={{ paddingTop: "10px" }}>
+            <div className="" style={{ paddingTop: "30px" }}>
                 {children}
             </div>
         </>

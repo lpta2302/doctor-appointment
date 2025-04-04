@@ -37,7 +37,7 @@
 #about,
 #contact,
 #doctor {
-    scroll-margin-top: 85px; /* Điều chỉnh theo chiều cao của header */
+    scroll-margin-top: 85px;
 }
 
 .active {
