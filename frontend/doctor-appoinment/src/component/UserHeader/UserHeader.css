@@ -3,8 +3,10 @@
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 1000; /* Đảm bảo nằm trên các phần khác */
+    z-index: 1000;
+    height: 85px;
     background-color: #abe0ef;
+    box-shadow: 0 1px 7px rgba(0, 0, 0, 0.7) !important;
 }
 
 .header .button {
@@ -35,5 +37,9 @@
 #about,
 #contact,
 #doctor {
-    scroll-margin-top: 100px; /* Điều chỉnh theo chiều cao của header */
+    scroll-margin-top: 85px; /* Điều chỉnh theo chiều cao của header */
+}
+
+.active {
+    color: red !important;
 }

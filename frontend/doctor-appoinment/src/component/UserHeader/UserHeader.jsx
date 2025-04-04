@@ -1,6 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import logo_bookingapp from "../../assets/logo_bookingapp.png";
+import { Link, NavLink } from "react-router-dom";
+import logo_bookingapp from "../../assets/image/logo_bookingapp.png";
 import "./UserHeader.css";
 
 function UserHeader() {
@@ -35,14 +35,8 @@ function UserHeader() {
                         </li>
 
                         <li className="nav-item mx-3">
-                            <Link className="link nav-link fs-4" to="/#contact">
+                            <Link className="link nav-link fs-4" to="/#footer">
                                 Contact
-                            </Link>
-                        </li>
-
-                        <li className="nav-item mx-3">
-                            <Link className="link nav-link fs-4" to="/#doctor">
-                                Doctor
                             </Link>
                         </li>
 

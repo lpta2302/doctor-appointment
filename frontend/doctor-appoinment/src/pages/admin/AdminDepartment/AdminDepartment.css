@@ -1,0 +1,29 @@
+.admin-department tr {
+    user-select: none;
+}
+
+.admin-department tr:hover {
+    background-color: #333 !important;
+}
+
+.admin-department .btn-delete,
+.admin-department .btn-update {
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+.admin-department .control>div {
+    width: 3rem;
+}
+
+.admin-department .btn-delete:hover {
+    cursor: pointer;
+    color: #f72c2c;
+    transform: scale(1.3);
+}
+
+.admin-department .btn-update:hover {
+    cursor: pointer;
+    color: #1dbb11;
+    transform: scale(1.3);
+}

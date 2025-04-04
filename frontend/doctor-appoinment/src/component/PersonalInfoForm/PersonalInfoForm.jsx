@@ -86,7 +86,7 @@ const PersonalInfoForm = ({formData, handleChange, goNext}) => {
                 </div>
             </div>
 
-            <button type="submit" className="btn-submit m-3" onClick={goNext}>
+            <button type="button" className="btn-submit m-3" onClick={goNext}>
                 Next
             </button>
         </form>

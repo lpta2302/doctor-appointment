@@ -1,3 +1,7 @@
+.booking {
+    min-height: 100vh;
+}
+
 .booking h4 {
     margin-left: 5rem;
     user-select: none;

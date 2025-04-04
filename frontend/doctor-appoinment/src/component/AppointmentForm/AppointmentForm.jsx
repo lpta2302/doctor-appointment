@@ -1,4 +1,42 @@
+import {useState, useEffect} from "react"
+import {doctorService} from "../../server/server"
+
+const SERVICE_API = doctorService.CLINIC_SERVICE_API;
+
 const AppointmentForm = ({formData, handleChange, goNext}) => {
+
+    const [departments, setDepartments] = useState([]);
+    
+    useEffect(() => {
+        if (formData.form.date) {
+            fetchGetSpecializations();
+        }
+    }, [formData.form.date]);
+
+    const fetchGetSpecializations = async (data) => {
+        const response = await fetch(`${SERVICE_API}/requirement`, {
+            method: "POST",
+            header: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+
+            setDepartments(data.content);
+        }
+    }
+
+    const departmentList = departments.map((department) => {
+        return (
+            <option key={department.code} value={department.code}>
+                {department.name}
+            </option>
+        )
+    });
+
     return (
         <form action="" className="row">
             <div className="mt-3 mb-2 mx-2">
@@ -24,9 +62,7 @@ const AppointmentForm = ({formData, handleChange, goNext}) => {
                     </label>
                     <select className="form-select" onChange={handleChange} id="department" name="department">
                         <option>-Select All-</option>
-                        <option>Cardiology</option>
-                        <option>Neurology</option>
-                        <option>Orthopedic</option>
+                        {departmentList}
                     </select>
                 </div>
             )}
@@ -46,7 +82,7 @@ const AppointmentForm = ({formData, handleChange, goNext}) => {
             )}
 
             {formData.form.doctor && (
-                <button type="submit" className="btn-submit m-3" onClick={goNext}>Next</button>
+                <button type="button" className="btn-submit m-3" onClick={goNext}>Next</button>
             )}
         </form>
     )

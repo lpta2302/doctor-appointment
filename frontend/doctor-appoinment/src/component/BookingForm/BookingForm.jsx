@@ -28,7 +28,13 @@ export default function BookingForm() {
     }
 
     const goNext = () => {
-        setStep(step + 1);
+        if (step == 1) {
+            if (formData.form.name != "" && formData.form.phone != "" && formData.form.email != "" && formData.form.location != "") {
+                setStep(step + 1);
+            } else {
+                alert("Error");
+            }
+        }
     }
 
     const goBack = () => {
@@ -39,9 +45,9 @@ export default function BookingForm() {
 
     return (
         <div className="container booking-form">
-            {step === 1 && (<PersonalInfoForm handleChange={handleChange} formData={formData} goNext={goNext}/>)}
+            {step === 1 && (<PersonalInfoForm handleChange={handleChange} formData={formData} goNext={goNext} />)}
 
-            {step === 2 && (<AppointmentForm handleChange={handleChange} formData={formData} goNext={goNext}/>)}
+            {step === 2 && (<AppointmentForm handleChange={handleChange} formData={formData} goNext={goNext} />)}
 
             {step === 3 && <h1>Thanh toán mẹ m đi!!!</h1>}
         </div>
