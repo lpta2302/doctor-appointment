@@ -3,3 +3,13 @@ spring:
     name: doctor-service
   config:
     import: optional:configserver:${SPRING_CLOUD_CONFIG_URI:http://localhost:8888}
+
+  kafka:
+    producer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAPSERVER:localhost:9092}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    properties:
+      spring.json.type.mapping: 
+        specialization-info: com.nhom1.doctor_service.kafka.SpecializationInfo
+        doctor-info: com.nhom1.doctor_service.kafka.DoctorInfo

@@ -1,20 +1,26 @@
 package com.nhom1.doctor_service.core.specialization.service;
 
 import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
 import com.nhom1.doctor_service.common.PageResponse;
 import com.nhom1.doctor_service.core.specialization.entity.Specialization;
 import com.nhom1.doctor_service.core.specialization.repository.SpecializationRepository;
 import com.nhom1.doctor_service.core.specialization.specification.SpecializationSpecifications;
+import com.nhom1.doctor_service.kafka.SpecializationInfo;
+import com.nhom1.doctor_service.kafka.SpecializationProducer;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class SpecializationService {
+
+    private final SpecializationProducer specializationProducer;
 
     private final SpecializationRepository specializationRepository;
 
@@ -31,7 +37,11 @@ public class SpecializationService {
         foundSpecialization.setName(specialization.getName());
         foundSpecialization.setPrice(specialization.getPrice());
 
-        return specializationRepository.save(specialization).getId();
+        specializationProducer.sendUpdatedSpecializationMessage(
+            new SpecializationInfo(specializationId, specialization.getName())
+        );
+
+        return specializationRepository.save(foundSpecialization).getId();
     }
 
     public boolean checkById(Long id){
@@ -62,6 +72,9 @@ public class SpecializationService {
             doctor->doctor.getSpecializations().clear()
         );
 
+        specializationProducer.sendDeletedSpecializationMessage(
+            new SpecializationInfo(specializationId, specialization.getName())
+        );
         specializationRepository.deleteById(specializationId);
     }
 

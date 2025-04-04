@@ -8,6 +8,7 @@ import com.nhom1.doctor_service.core.doctor.dto.DoctorRequest;
 import com.nhom1.doctor_service.core.doctor.dto.DoctorResponse;
 import com.nhom1.doctor_service.core.doctor.entity.Doctor;
 import com.nhom1.doctor_service.core.specialization.entity.Specialization;
+import com.nhom1.doctor_service.kafka.DoctorInfo;
 
 @Component
 public class DoctorMapper {
@@ -63,6 +64,15 @@ public class DoctorMapper {
             .specializations(
                 specializations
             )
+            .build();
+    }
+
+    public DoctorInfo convertDoctorInfoFrom(Doctor doctor){
+        return DoctorInfo.builder()
+            .id(doctor.getId())
+            .code(doctor.getCode())
+            .fullname(doctor.getFullname())
+            .phoneNumber(doctor.getPhoneNumber())
             .build();
     }
 }

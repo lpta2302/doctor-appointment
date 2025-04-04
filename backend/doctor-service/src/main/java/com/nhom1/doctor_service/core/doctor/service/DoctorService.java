@@ -16,6 +16,7 @@ import com.nhom1.doctor_service.core.doctor.repository.DoctorRepository;
 import com.nhom1.doctor_service.core.doctor.specification.DoctorSpecifications;
 import com.nhom1.doctor_service.core.specialization.entity.Specialization;
 import com.nhom1.doctor_service.core.specialization.service.SpecializationService;
+import com.nhom1.doctor_service.kafka.DoctorProducer;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class DoctorService {
+
+    private final DoctorProducer doctorProducer;
     private final DoctorRepository doctorRepository;
     private final DoctorMapper doctorMapper;
 
@@ -52,6 +55,8 @@ public class DoctorService {
         validateSpecializations(specializations, doctorRequest);
             
         doctor.setSpecializations(specializations);
+
+        doctorProducer.sendUpdatedDoctorMessage(doctorMapper.convertDoctorInfoFrom(doctor));
 
         return doctorRepository.save(doctor).getId();
     }
@@ -98,6 +103,8 @@ public class DoctorService {
     }
 
     public void deleteById(Long doctorId) {
+        Doctor doctor = findById(doctorId);
+        doctorProducer.sendDeletedDoctorMessage(doctorMapper.convertDoctorInfoFrom(doctor));
         doctorRepository.deleteById(doctorId);
     }
 
