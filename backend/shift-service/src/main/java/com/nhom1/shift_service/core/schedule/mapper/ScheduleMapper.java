@@ -13,6 +13,8 @@ public class ScheduleMapper {
             List<ShiftResponse> shiftResponse) {
         return ScheduleResponse.builder()
             .clinicId(schedule.getScheduleId().getClinicId())
+            .specializationName(schedule.getSpecializationName())
+            .clinicName(schedule.getClinicName())
             .appliedDate(schedule.getScheduleId().getAppliedDate())
             .specializationId( schedule.getSpecializationId())
             .shifts(shiftResponse)

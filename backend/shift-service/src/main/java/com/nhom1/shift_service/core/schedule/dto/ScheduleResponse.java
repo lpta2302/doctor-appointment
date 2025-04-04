@@ -10,5 +10,7 @@ public record ScheduleResponse(
     Long clinicId,
     LocalDate appliedDate,
     Long specializationId,
+    String specializationName,
+    String clinicName,
     List<ShiftResponse> shifts
 ) {}

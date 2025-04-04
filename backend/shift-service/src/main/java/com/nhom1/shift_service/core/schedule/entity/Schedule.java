@@ -10,6 +10,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nhom1.shift_service.core.shift.entity.Shift;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -17,6 +18,7 @@ import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,8 +40,16 @@ public class Schedule {
     @JsonIgnore
     private Long version;
 
-    @PositiveOrZero(message = "doctor id must be equal or greater than 0")
+    @PositiveOrZero(message = "specialization id must be equal or greater than 0")
     private Long specializationId;
+
+    @Column(length=200)
+    @Size(min=1, max=200, message="clinic name has 1-200 characters")
+    private String clinicName;
+
+    @Column(length=200)
+    @Size(min=1, max=200, message="specialization name has 1-200 characters")
+    private String specializationName;
 
     @OneToMany(mappedBy = "schedule", cascade = ALL, orphanRemoval = true, fetch = EAGER)
     @OrderBy("startTime ASC")

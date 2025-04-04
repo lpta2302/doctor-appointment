@@ -1,15 +1,18 @@
 package com.nhom1.shift_service.core.schedule.service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import com.nhom1.shift_service.core.clinic.client.ClinicClient;
 import com.nhom1.shift_service.core.clinic.dto.ClinicResponse;
 import com.nhom1.shift_service.core.schedule.dto.ScheduleRequest;
 import com.nhom1.shift_service.core.schedule.dto.ScheduleResponse;
+import com.nhom1.shift_service.core.schedule.dto.ScheduleTimeResponse;
 import com.nhom1.shift_service.core.schedule.entity.Schedule;
 import com.nhom1.shift_service.core.schedule.entity.ScheduleId;
 import com.nhom1.shift_service.core.schedule.mapper.ScheduleMapper;
@@ -41,6 +44,8 @@ public class ScheduleService {
             new Schedule(scheduleRequest.appliedDate(), scheduleRequest.clinicId());
 
         schedule.setSpecializationId(clinicResponse.specializationId());
+        schedule.setClinicName(clinicResponse.name());
+        schedule.setSpecializationName(clinicResponse.specializationName());
 
         List<Shift> shiftsOfSchedule = 
             shiftService.createShifts(scheduleRequest.shiftRequests());
@@ -136,5 +141,20 @@ public class ScheduleService {
 
     public void deleteAllById(List<ScheduleId> scheduleIds){
         scheduleRepository.deleteAllById(scheduleIds);
+    }
+
+    public ScheduleTimeResponse findScheduleTimeById(Long clinicId, LocalDate appliedDate) {
+        Schedule schedule = findById(clinicId, appliedDate);
+
+        Map<LocalTime, LocalTime> timeMap = schedule.getShifts().stream().collect(
+            Collectors.toMap(Shift::getStartTime, Shift::getEndTime)
+        );
+
+        return ScheduleTimeResponse.builder()
+            .clinicName(schedule.getClinicName())
+            .specializationName(schedule.getSpecializationName())
+            .shiftsTime(timeMap)
+            .build();
+
     }
 }

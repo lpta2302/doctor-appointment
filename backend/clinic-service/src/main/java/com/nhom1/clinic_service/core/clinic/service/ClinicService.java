@@ -13,7 +13,6 @@ import com.nhom1.clinic_service.core.clinic.repository.ClinicRepository;
 import com.nhom1.clinic_service.core.clinic.specification.ClinicSpecifications;
 import com.nhom1.clinic_service.core.specialization.client.SpecializationClient;
 import com.nhom1.clinic_service.core.specialization.dto.SpecializationResponse;
-import feign.FeignException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -26,7 +25,13 @@ public class ClinicService {
     private final ClinicMapper clinicMapper;
 
     public Long create(Clinic clinic) {
-        validateSpecialization(clinic.getSpecializationId());
+        SpecializationResponse specialization = 
+                specializationClient.findById(clinic.getSpecializationId())
+                .orElseThrow(()->new EntityNotFoundException(
+                        "not found specialization with id: "+
+                        clinic.getSpecializationId()));
+
+        clinic.setSpecializationName(specialization.name());
         
         return clinicRepository.save(clinic).getId();
     }
@@ -39,8 +44,14 @@ public class ClinicService {
         }
 
         if (foundClinic.getSpecializationId() != clinic.getSpecializationId()) {
-                validateSpecialization(clinic.getSpecializationId());
+                SpecializationResponse specialization = 
+                specializationClient.findById(clinic.getSpecializationId())
+                .orElseThrow(()->new EntityNotFoundException(
+                        "not found specialization with id: "+
+                        clinic.getSpecializationId()));
+
                 foundClinic.setSpecializationId(clinic.getSpecializationId());
+                foundClinic.setSpecializationName(specialization.name());
         } 
         foundClinic.setName(clinic.getName());
 
@@ -108,10 +119,6 @@ public class ClinicService {
             .build();
     }
 
-    public boolean checkExistById(Long clinicId) {
-        return clinicRepository.existsById(clinicId);
-    }
-
     public Clinic findById(Long clinicId) {
         return clinicRepository.findById(clinicId).orElseThrow(
                 () -> new EntityNotFoundException("not found clinic with id: " + clinicId));
@@ -127,18 +134,5 @@ public class ClinicService {
 
     public void deleteAllById(List<Long> clinicIds) {
         clinicRepository.deleteAllById(clinicIds);
-    }
-
-    private void validateSpecialization(Long specializationId){
-        try {
-                specializationClient
-                .checkById(specializationId)
-                .getStatusCode();
-        } catch (FeignException.NotFound e) {
-                throw new EntityNotFoundException(
-                        "not found specialization with id: " + specializationId);
-        } catch (Exception e) {
-                throw e;
-        }
     }
 }

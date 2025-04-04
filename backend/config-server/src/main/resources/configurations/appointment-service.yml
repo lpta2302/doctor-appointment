@@ -1,0 +1,27 @@
+spring:
+  jpa:
+    database: postgresql
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/appointment_db}
+    username: postgres
+    password: postgres
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka}
+
+server:
+  port: 8073
+  servlet:
+    context-path: /api/v1
+
+application:
+  config:
+    appointment-time: 15
+    doctor-url: ${APPLICATION_CONFIG_DOCTORSERVICE:http://localhost:8222}/api/v1/server/doctors
+    clinic-url: ${APPLICATION_CONFIG_CLINICSERVICE:http://localhost:8222}/api/v1/server/clinics
+    schedule-url: ${APPLICATION_CONFIG_SHIFTSERVICE:http://localhost:8222}/api/v1/server/schedules

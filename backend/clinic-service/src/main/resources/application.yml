@@ -3,7 +3,3 @@ spring:
     name: clinic-service
   config:
     import: optional:configserver:${SPRING_CLOUD_CONFIG_URI:http://localhost:8888}
-
-application:
-  config:
-    specialization-url: ${APPLICATION_CONFIG_DOCTORSERVICE:http://localhost:8222}/api/v1/server/specializations
