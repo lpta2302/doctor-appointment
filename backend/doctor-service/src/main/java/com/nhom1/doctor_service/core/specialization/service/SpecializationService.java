@@ -55,6 +55,13 @@ public class SpecializationService {
     }
 
     public void deleteById(Long specializationId) {
+        Specialization specialization =
+            findById(specializationId);
+        
+        specialization.getDoctors().forEach(
+            doctor->doctor.getSpecializations().clear()
+        );
+
         specializationRepository.deleteById(specializationId);
     }
 
