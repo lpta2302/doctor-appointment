@@ -9,9 +9,9 @@ const AdminDepartment = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
     const [showAddForm, setShowAddForm] = useState(false);
-    const [showUpdateForm, setShowUpdateForm] = useState({show: false, id: null});
+    const [showUpdateForm, setShowUpdateForm] = useState({ show: false, id: null });
     const [newDepartment, setNewDepartment] = useState({ code: "", name: "", price: "" });
-    const [dataUpdateDepartment, setDataUpdateDepartment] = useState({ name: "", price: "" });
+    const [dataUpdateDepartment, setDataUpdateDepartment] = useState({ code: "", name: "", price: "" });
     const pageSize = 5;
 
     const getAllDepartment = async (pageNumber, search = "") => {
@@ -55,6 +55,9 @@ const AdminDepartment = () => {
     };
 
     const updateDepartment = async (id) => {
+        const confirmDelete = window.confirm("Are you sure you want to update this department?");
+        if (!confirmDelete) return;
+        
         try {
             const response = await fetch(`/api/v1/admin/specializations/${id}`, {
                 method: "PUT",
@@ -66,16 +69,19 @@ const AdminDepartment = () => {
             if (!response.ok) {
                 throw new Error("Failed to update department");
             }
-            setShowUpdateForm({...showUpdateForm, show: false});
-            setDataUpdateDepartment({ name: "", price: "" });
-            alert("Add successfully !");
+            setShowUpdateForm({ ...showUpdateForm, show: false });
+            setDataUpdateDepartment({ code: "", name: "", price: "" });
+            alert("Update successfully !");
             getAllDepartment(page, searchTerm);
         } catch (error) {
-            alert("ID already exists !");
+            alert("Update failed !");
         }
     };
 
     const removeDepartment = async (id) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this department?");
+        if (!confirmDelete) return;
+
         try {
             const response = await fetch(`/api/v1/admin/specializations/${id}`, {
                 method: "DELETE"
@@ -142,10 +148,17 @@ const AdminDepartment = () => {
             )}
 
             {showUpdateForm.show && (
-                <div className="modal-overlay" onClick={() => setShowUpdateForm({...showUpdateForm, show: false})}>
+                <div className="modal-overlay" onClick={() => setShowUpdateForm({ ...showUpdateForm, show: false })}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <button className="modal-close" onClick={() => setShowUpdateForm({...showUpdateForm, show: false})}>&times;</button>
+                        <button className="modal-close" onClick={() => setShowUpdateForm({ ...showUpdateForm, show: false })}>&times;</button>
                         <h3>Update Department</h3>
+                        <input
+                            type="text"
+                            className="form-control mb-2"
+                            placeholder="Code"
+                            value={dataUpdateDepartment.code}
+                            onChange={(e) => setDataUpdateDepartment({ ...dataUpdateDepartment, code: e.target.value })}
+                        />
                         <input
                             type="text"
                             className="form-control mb-2"
@@ -188,7 +201,7 @@ const AdminDepartment = () => {
                                                 <button className="btn btn-delete" onClick={() => { removeDepartment(department.id) }}><i className="fa-solid fa-trash"></i></button>
                                             </div>
                                             <div className="col-1 m-0 p-0">
-                                                <button className="btn btn-update" onClick={() => { setShowUpdateForm({...showUpdateForm, show: true}) }}><i className="fa-solid fa-pen-to-square"></i></button>
+                                                <button className="btn btn-update" onClick={() => { setShowUpdateForm({ ...showUpdateForm, show: true }) }}><i className="fa-solid fa-pen-to-square"></i></button>
                                             </div>
                                         </div>
                                     </td>

@@ -4,7 +4,6 @@ import "./AdminClinic.css";
 
 const AdminClinic = () => {
     const [clinics, setClinics] = useState([]);
-    const [entries, setEntries] = useState([]);
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
     const [searchParams, setSearchParams] = useState({ code: "", name: "" });
@@ -12,10 +11,11 @@ const AdminClinic = () => {
     const [newClinic, setNewClinic] = useState({
         code: "",
         name: "",
-        specializationId: ""
+        specializationId: "",
+        specializationName: ""
     });
     const [specializations, setSpecializations] = useState([]);
-    const pageSize = 15;
+    const pageSize = 3;
 
     const fetchClinics = async (pageNumber, params) => {
         try {
@@ -33,7 +33,6 @@ const AdminClinic = () => {
             const data = await response.json();
             setClinics(data.content);
             setTotalPages(data.totalPages);
-            setEntries(data.content.length > 0 ? Object.entries(data.content[0]) : []);
         } catch (error) {
             console.error("Error fetching clinics:", error);
         }
@@ -57,8 +56,17 @@ const AdminClinic = () => {
         setPage(0);
     };
 
-    const handleNewClinicChange = (e) => {
-        setNewClinic({ ...newClinic, [e.target.name]: e.target.value });
+    const handleNewClinicChange = async (e) => {
+        if (e.target.name === "specializationId") {
+            const selectedName = e.target.options[e.target.selectedIndex].text;
+            setNewClinic({
+                ...newClinic,
+                [e.target.name]: e.target.value,
+                specializationName: selectedName
+            });
+        } else {
+            setNewClinic({ ...newClinic, [e.target.name]: e.target.value });
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -74,12 +82,45 @@ const AdminClinic = () => {
             if (!response.ok) {
                 throw new Error("Failed to add clinic");
             }
+            alert("Clinic added successfully!");
             fetchClinics(page, searchParams);
+            setNewClinic({
+                code: "",
+                name: "",
+                specializationId: "",
+                specializationName: ""
+            });
             setShowForm(false);
         } catch (error) {
-            console.error("Error adding clinic:", error);
+            alert("Failed to add clinic !");
         }
     };
+
+    const deleteClinic = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this clinic?")) {
+            return;
+        }
+    
+        try {
+            const response = await fetch("/api/v1/admin/clinics", {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify([id]) // Chuyển id thành mảng [id]
+            });
+    
+            if (!response.ok) {
+                throw new Error("Failed to delete clinic");
+            }
+    
+            alert("Clinic deleted successfully!");
+            fetchClinics(page, searchParams);
+        } catch (error) {
+            alert("Failed to delete clinic!");
+        }
+    };
+    
 
     useEffect(() => {
         fetchClinics(page, searchParams);
@@ -87,7 +128,7 @@ const AdminClinic = () => {
     }, [page, searchParams]);
 
     return (
-        <div className="container-fluid text-center admin-clinic">
+        <div className="container text-center admin-clinic">
             <h1>Admin Clinic</h1>
             <div className="container">
                 <input
@@ -110,63 +151,79 @@ const AdminClinic = () => {
             <button className="btn btn-primary mb-3" onClick={() => setShowForm(true)}>
                 Add New Clinic
             </button>
+
             {showForm && (
-                <form onSubmit={handleSubmit} className="mb-3">
-                    <input
-                        type="text"
-                        className="form-control mb-2"
-                        name="code"
-                        placeholder="Clinic Code"
-                        value={newClinic.code}
-                        onChange={handleNewClinicChange}
-                        required
-                    />
-                    <input
-                        type="text"
-                        className="form-control mb-2"
-                        name="name"
-                        placeholder="Clinic Name"
-                        value={newClinic.name}
-                        onChange={handleNewClinicChange}
-                        required
-                    />
-                    <select
-                        className="form-control mb-2"
-                        name="specializationId"
-                        value={newClinic.specializationId}
-                        onChange={handleNewClinicChange}
-                        required
-                    >
-                        <option value="">Select Specialization</option>
-                        {specializations.map((spec) => (
-                            <option key={spec.id} value={spec.id}>{spec.name}</option>
-                        ))}
-                    </select>
-                    <button type="submit" className="btn btn-success">Add Clinic</button>
-                    <button type="button" className="btn btn-secondary ml-2" onClick={() => setShowForm(false)}>Cancel</button>
-                </form>
+                <div className="modal-overlay" onClick={() => setShowForm(false)}>
+                    <form className="modal-content" onClick={(e) => e.stopPropagation()} /*onSubmit={isUpdate.update ? () => { handleUpdate(isUpdate.id) } : }*/ onSubmit={handleSubmit}>
+                        <button className="modal-close" onClick={() => setShowForm(false)}>&times;</button>
+                        <h3>Add New Department</h3>
+                        <input
+                            type="text"
+                            className="form-control mb-2"
+                            name="code"
+                            placeholder="Clinic Code"
+                            value={newClinic.code}
+                            onChange={handleNewClinicChange}
+                            required
+                        />
+                        <input
+                            type="text"
+                            className="form-control mb-2"
+                            name="name"
+                            placeholder="Clinic Name"
+                            value={newClinic.name}
+                            onChange={handleNewClinicChange}
+                            required
+                        />
+                        <select
+                            className="form-control mb-2"
+                            name="specializationId"
+                            value={newClinic.specializationId}
+                            onChange={handleNewClinicChange}
+                            required
+                        >
+                            <option value="">Select Specialization</option>
+                            {specializations.map((spec) => (
+                                <option key={spec.id} value={spec.id}>{spec.name}</option>
+                            ))}
+                        </select>
+                        <button className="btn btn-success">Submit</button>
+                    </form>
+
+                </div>
             )}
-            <table className="table table-striped">
-                <thead>
-                    <tr>
-                        {entries.map(([key], index) => (
-                            <th key={index}>{key}</th>
-                        ))}
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {clinics.map((clinic, index) => (
-                        <tr key={index}>
-                            <RecordItem data={clinic} />
-                            <td>
-                                <button className="btn btn-delete"><i className="fa-solid fa-trash"></i></button>
-                                <button className="btn btn-update"><i className="fa-solid fa-pen-to-square"></i></button>
-                            </td>
+
+            {clinics.length > 0 ? (
+                <table className="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>id</th>
+                            <th>code</th>
+                            <th>name</th>
+                            <th>specialization name</th>
+                            <th>specialization id</th>
+                            <th>action</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {clinics.map((clinic, index) => (
+                            <tr key={index}>
+                                <RecordItem data={{ id: clinic.id, code: clinic.code, name: clinic.name, specializationName: clinic.specialization.name, specializationId: clinic.specialization.id }} />
+                                <td>
+                                    <button className="btn btn-delete" onClick={() => {deleteClinic(clinic.id)}}><i className="fa-solid fa-trash"></i></button>
+                                    <button className="btn btn-update"><i className="fa-solid fa-pen-to-square"></i></button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            ) : (
+                <div className="container no-data text-center">
+                    <p>Không có data</p>
+                </div>
+            )}
+
+
             <nav>
                 <ul className="pagination justify-content-center">
                     <li className={`page-item ${page === 0 ? "disabled" : ""}`}>

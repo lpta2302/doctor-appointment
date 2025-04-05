@@ -8,7 +8,7 @@ const AdminDoctor = () => {
     const [page, setPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
     const [searchParams, setSearchParams] = useState({ code: "", name: "", specializationId: "" });
-    const [showForm, setShowForm] = useState(false); // Hiển thị form thêm bác sĩ
+    const [showForm, setShowForm] = useState(false);
     const [newDoctor, setNewDoctor] = useState({
         code: "",
         firstName: "",
@@ -22,7 +22,8 @@ const AdminDoctor = () => {
         yearsOfExperience: 0,
         specializationIds: []
     });
-    const [specializations, setSpecializations] = useState([]); // Lưu danh sách specialization
+    const [isUpdate, setIsUpdate] = useState({update: false, id: null});
+    const [specializations, setSpecializations] = useState([]);
     const pageSize = 3;
 
     const fetchDoctors = async (pageNumber, params) => {
@@ -63,7 +64,7 @@ const AdminDoctor = () => {
 
     const handleSearchChange = (e) => {
         setSearchParams({ ...searchParams, [e.target.name]: e.target.value });
-        setPage(0); // Reset về trang đầu khi tìm kiếm
+        setPage(0);
     };
 
     const handleNewDoctorChange = (e) => {
@@ -78,7 +79,7 @@ const AdminDoctor = () => {
         const value = e.target.value;
         setNewDoctor((prev) => ({
             ...prev,
-            specializationIds: value ? [value] : [] // Chỉ chọn 1 specialization
+            specializationIds: value ? [value] : []
         }));
     };
 
@@ -95,18 +96,122 @@ const AdminDoctor = () => {
             if (!response.ok) {
                 throw new Error("Failed to add doctor");
             }
-            // Fetch lại danh sách bác sĩ sau khi thêm thành công
+
+            alert("Add successfully !");
             fetchDoctors(page, searchParams);
-            setShowForm(false); // Đóng form sau khi thêm
+            setNewDoctor({
+                code: "",
+                firstName: "",
+                lastName: "",
+                gender: "MALE",
+                description: "",
+                phoneNumber: "",
+                workplace: "",
+                qualification: "",
+                dateOfBirth: "",
+                yearsOfExperience: 0,
+                specializationIds: []
+            });
+            setShowForm(false);
         } catch (error) {
-            console.error("Error adding doctor:", error);
+            alert("Add failed !");
+        }
+    };
+
+    const handleUpdate = async (id) => {
+        const confirmDelete = window.confirm("Are you sure you want to update this doctor?");
+        if (!confirmDelete) return;
+
+        try {
+            const response = await fetch(`/api/v1/admin/doctors/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newDoctor)
+            });
+            if (!response.ok) {
+                throw new Error("Failed to add doctor");
+            }
+
+            alert("Update successfully !");
+            fetchDoctors(page, searchParams);
+            setNewDoctor({
+                code: "",
+                firstName: "",
+                lastName: "",
+                gender: "MALE",
+                description: "",
+                phoneNumber: "",
+                workplace: "",
+                qualification: "",
+                dateOfBirth: "",
+                yearsOfExperience: 0,
+                specializationIds: []
+            });
+            setShowForm(false);
+        } catch (error) {
+            alert("Update failed !");
+        }
+    };
+
+    const handleUpdateClick = (doctorId) => {
+        setShowForm(true);
+        setIsUpdate({update: true, id: doctorId});;
+        getDoctor(doctorId);
+    };
+
+    const getDoctor = async (id) => {
+        try {
+            const response = await fetch(`/api/v1/admin/doctors/${id}`, {
+                method: "GET",
+            });
+            if (!response.ok) {
+                throw new Error("Failed to add doctor");
+            }
+            const data = await response.json();
+            setNewDoctor({
+                code: data.code,
+                firstName: data.firstName,
+                lastName:  data.lastName,
+                gender: "MALE",
+                description: data.description,
+                phoneNumber: data.phoneNumber,
+                workplace: data.workplace,
+                qualification: data.qualification,
+                dateOfBirth: data.dateOfBirth,
+                yearsOfExperience: data.yearsOfExperience,
+                specializationIds: data.specializations.map(s => s.id)
+            });
+        } catch (error) {
+            alert("Update failed !");
+        }
+    };
+
+    const deleteDoctor = async (doctorId) => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this doctor?");
+        if (!confirmDelete) return;
+
+        try {
+            const response = await fetch(`/api/v1/admin/doctors/${doctorId}`, {
+                method: "DELETE"
+            });
+            if (!response.ok) {
+                throw new Error("Failed to delete doctor");
+            }
+            alert("Delete successfully !");
+            fetchDoctors(page, searchParams);
+        } catch (error) {
+            alert("Delete failed !");
         }
     };
 
     useEffect(() => {
         fetchDoctors(page, searchParams);
-        fetchSpecializations(); // Lấy danh sách specialization khi load component
+        fetchSpecializations();
     }, [page, searchParams]);
+
+    console.log(isUpdate);
 
     return (
         <div className="container-fluid text-center admin-doctor">
@@ -138,162 +243,168 @@ const AdminDoctor = () => {
                 />
             </div>
             <div className="container record-items">
-                <button className="btn btn-primary mb-3" onClick={() => setShowForm(true)}>
+                <button className="btn btn-primary mb-3" onClick={() => {
+                    setShowForm(true);
+                    setIsUpdate({update: false, id: null});
+                }}>
                     Add New Doctor
                 </button>
 
                 {showForm && (
-                    <form onSubmit={handleSubmit} className="mb-3">
-                        <div className="form-group">
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="code"
-                                placeholder="Code"
-                                value={newDoctor.code}
-                                onChange={handleNewDoctorChange}
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="firstName"
-                                placeholder="First Name"
-                                value={newDoctor.firstName}
-                                onChange={handleNewDoctorChange}
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="lastName"
-                                placeholder="Last Name"
-                                value={newDoctor.lastName}
-                                onChange={handleNewDoctorChange}
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <select
-                                className="form-control"
-                                name="specializationId"
-                                value={newDoctor.specializationIds[0] || ""}
-                                onChange={handleSpecializationChange}
-                            >
-                                <option value="">Select Specialization</option>
-                                {specializations.map((specialization) => (
-                                    <option key={specialization.id} value={specialization.id}>
-                                        {specialization.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <textarea
-                                className="form-control"
-                                name="description"
-                                placeholder="Description"
-                                value={newDoctor.description}
-                                onChange={handleNewDoctorChange}
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="phoneNumber"
-                                placeholder="Phone Number"
-                                value={newDoctor.phoneNumber}
-                                onChange={handleNewDoctorChange}
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="workplace"
-                                placeholder="Workplace"
-                                value={newDoctor.workplace}
-                                onChange={handleNewDoctorChange}
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <input
-                                type="text"
-                                className="form-control"
-                                name="qualification"
-                                placeholder="Qualification"
-                                value={newDoctor.qualification}
-                                onChange={handleNewDoctorChange}
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <input
-                                type="date"
-                                className="form-control"
-                                name="dateOfBirth"
-                                value={newDoctor.dateOfBirth}
-                                onChange={handleNewDoctorChange}
-                                required
-                            />
-                        </div>
-                        <div className="form-group">
-                            <input
-                                type="number"
-                                className="form-control"
-                                name="yearsOfExperience"
-                                placeholder="Years of Experience"
-                                value={newDoctor.yearsOfExperience}
-                                onChange={handleNewDoctorChange}
-                                required
-                            />
-                        </div>
-                        <button type="submit" className="btn btn-success">
-                            Add Doctor
-                        </button>
-                        <button
-                            type="button"
-                            className="btn btn-secondary ml-2"
-                            onClick={() => setShowForm(false)}
-                        >
-                            Cancel
-                        </button>
-                    </form>
+                    <div className="modal-overlay" onClick={() => setShowForm(false)}>
+                        <form className="modal-content" onClick={(e) => e.stopPropagation()} onSubmit={isUpdate.update ? () => {handleUpdate(isUpdate.id)} : handleSubmit}>
+                            <button className="modal-close" onClick={() => setShowForm(false)}>&times;</button>
+                            <h3>Add New Department</h3>
+                            <div className="row justify-content-center">
+                                <div className="col">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        name="code"
+                                        placeholder="Code"
+                                        value={newDoctor.code}
+                                        onChange={handleNewDoctorChange}
+                                        required
+                                    />
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        name="firstName"
+                                        placeholder="First Name"
+                                        value={newDoctor.firstName}
+                                        onChange={handleNewDoctorChange}
+                                        required
+                                    />
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        name="lastName"
+                                        placeholder="Last Name"
+                                        value={newDoctor.lastName}
+                                        onChange={handleNewDoctorChange}
+                                        required
+                                    />
+                                    <select
+                                        className="form-control"
+                                        name="gender"
+                                        value={newDoctor.gender}
+                                        onChange={handleNewDoctorChange}
+                                        required
+                                    >
+                                        <option value="MALE">MALE</option>
+                                        <option value="FEMALE">FEMALE</option>
+                                    </select>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        name="description"
+                                        placeholder="Description"
+                                        value={newDoctor.description}
+                                        onChange={handleNewDoctorChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="col">
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        name="phoneNumber"
+                                        placeholder="Phone Number"
+                                        value={newDoctor.phoneNumber}
+                                        onChange={handleNewDoctorChange}
+                                        required
+                                    />
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        name="workplace"
+                                        placeholder="Workplace"
+                                        value={newDoctor.workplace}
+                                        onChange={handleNewDoctorChange}
+                                        required
+                                    />
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        name="qualification"
+                                        placeholder="Qualification"
+                                        value={newDoctor.qualification}
+                                        onChange={handleNewDoctorChange}
+                                        required
+                                    />
+                                    <input
+                                        type="date"
+                                        className="form-control"
+                                        name="dateOfBirth"
+                                        value={newDoctor.dateOfBirth}
+                                        onChange={handleNewDoctorChange}
+                                        required
+                                    />
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        name="yearsOfExperience"
+                                        placeholder="Years of Experience"
+                                        value={newDoctor.yearsOfExperience}
+                                        onChange={handleNewDoctorChange}
+                                        required
+                                    />
+
+                                    <select
+                                        className="form-control"
+                                        name="specializationId"
+                                        value={(newDoctor.specializationIds[0]) || ""}
+                                        onChange={handleSpecializationChange}
+                                    >
+                                        <option value="">Select Specialization</option>
+                                        {specializations.map((specialization) => (
+                                            <option key={specialization.id} value={specialization.id}>
+                                                {specialization.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="" className="btn btn-success">Submit</button>
+                        </form>
+
+                    </div>
                 )}
 
-                <table className="table table-striped">
-                    <thead className="field">
-                        <tr>
-                            {entries.map(([key], index) => (
-                                <th key={index}>{key}</th>
-                            ))}
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="data">
-                        {doctors.map((doctor, index) => (
-                            <tr key={index}>
-                                <RecordItem data={doctor} />
-                                <td>
-                                    <div className="col-1">
-                                        <button className="btn btn-delete"><i className="fa-solid fa-trash"></i></button>
-                                    </div>
-                                    <div className="col-1">
-                                        <button className="btn btn-update"><i className="fa-solid fa-pen-to-square"></i></button>
-                                    </div>
-                                </td>
+                {doctors.length > 0 ? (
+                    <table className="table table-striped">
+                        <thead className="field">
+                            <tr>
+                                {entries.map(([key], index) => (
+                                    <th key={index}>{key}</th>
+                                ))}
+                                <th>Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="data">
+                            {doctors.map((doctor, index) => (
+                                <tr key={index}>
+                                    <RecordItem data={doctor} />
+                                    <td>
+                                        <div className="col-1">
+                                            <button className="btn btn-delete" onClick={() => { deleteDoctor(doctor.id) }}><i className="fa-solid fa-trash"></i></button>
+                                        </div>
+                                        <div className="col-1">
+                                            <button className="btn btn-update" onClick={() => {
+                                                handleUpdateClick(doctor.id)
+                                            }}><i className="fa-solid fa-pen-to-square"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                ) : (
+                    <div className="no-data text-center">
+                        <p>Không có data</p>
+                    </div>
+                )}
+
                 <nav>
                     <ul className="pagination justify-content-center">
                         <li className={`page-item ${page === 0 ? "disabled" : ""}`}>
@@ -310,7 +421,7 @@ const AdminDoctor = () => {
                     </ul>
                 </nav>
             </div>
-        </div>
+        </div >
     );
 };
 
