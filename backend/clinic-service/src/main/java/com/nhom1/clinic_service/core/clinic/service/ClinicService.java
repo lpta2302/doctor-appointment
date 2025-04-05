@@ -43,7 +43,7 @@ public class ClinicService {
                 foundClinic.setCode(clinic.getCode());
         }
 
-        if (foundClinic.getSpecializationId() != clinic.getSpecializationId()) {
+        if (!foundClinic.getSpecializationId().equals(clinic.getSpecializationId())) {
                 SpecializationResponse specialization = 
                 specializationClient.findById(clinic.getSpecializationId())
                 .orElseThrow(()->new EntityNotFoundException(
@@ -69,7 +69,7 @@ public class ClinicService {
                         .map(clinic -> clinicMapper.convertClinicResponseFrom(clinic,
                                 clinic.getSpecializationId() != null
                                         ? specializationResponses.stream().filter(
-                                                spec -> spec.id() == clinic.getSpecializationId())
+                                                spec -> spec.id().equals(clinic.getSpecializationId()))
                                                 .findFirst()
                                                 .orElseThrow(() -> new EntityNotFoundException(
                                                         "not found specialization with id: "
@@ -95,7 +95,7 @@ public class ClinicService {
                         .map(clinic -> clinicMapper.convertClinicResponseFrom(clinic,
                                 clinic.getSpecializationId() != null
                                         ? specializationResponses.stream().filter(
-                                                spec -> spec.id() == clinic.getSpecializationId())
+                                                spec -> spec.id().equals(clinic.getSpecializationId()))
                                                 .findFirst()
                                                 .orElseThrow(() -> new EntityNotFoundException(
                                                         "not found specialization with id: "

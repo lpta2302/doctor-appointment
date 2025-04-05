@@ -31,14 +31,14 @@ public class ClinicSpecifications {
         return (root, query, criteriaBuilder) -> 
             criteriaBuilder.like(
                 criteriaBuilder.lower(root.get("name")), 
-                "%" + name + "%");
+                "%" + name.toLowerCase() + "%");
     }
 
     public static Specification<Clinic> haveCodeEqual(String code){
         return (root, query, criteriaBuilder) -> 
             criteriaBuilder.equal(
                 criteriaBuilder.lower(root.get("code")), 
-                code);
+                code.toLowerCase());
     }
 
     public static Specification<Clinic> createSearchSpecification(Map<String,String> params){

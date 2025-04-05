@@ -118,6 +118,7 @@ services:
       - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
       - APPLICATION_CONFIG_DOCTORSERVICE=http://doctor-service:8070
+      - KAFKA_BOOTSTRAP_SERVER=kafka:9092
     depends_on:
       postgres:
         condition: service_healthy
@@ -125,6 +126,8 @@ services:
         condition: service_healthy
       discovery-server:
         condition: service_healthy
+      kafka:
+        condition: service_started
     ports:
       - 8071:8071
     networks:

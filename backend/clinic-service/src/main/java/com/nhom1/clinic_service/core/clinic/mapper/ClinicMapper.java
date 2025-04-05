@@ -13,6 +13,7 @@ public class ClinicMapper {
             .id(clinic.getId())
             .code(clinic.getCode())
             .name(clinic.getName())
+            .specializationName(clinic.getSpecializationName())
             .specialization(specializationResponse)
             .build();
     }

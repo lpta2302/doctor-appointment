@@ -5,7 +5,7 @@ public enum TopicNames {
     SPECIALIZATION_DELETED("specialization-deleted"),
     DOCTOR_UPDATED("doctor-updated"),
     DOCTOR_DELETED("doctor-deleted");
-    private String name;
+    private final String name;
 
     private TopicNames(String name) {
         this.name = name;
