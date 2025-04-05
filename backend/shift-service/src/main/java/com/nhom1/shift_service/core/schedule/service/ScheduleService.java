@@ -6,8 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
 import com.nhom1.shift_service.core.clinic.client.ClinicClient;
 import com.nhom1.shift_service.core.clinic.dto.ClinicResponse;
 import com.nhom1.shift_service.core.schedule.dto.ScheduleRequest;
@@ -22,12 +24,18 @@ import com.nhom1.shift_service.core.shift.dto.ShiftRequest;
 import com.nhom1.shift_service.core.shift.dto.ShiftResponse;
 import com.nhom1.shift_service.core.shift.entity.Shift;
 import com.nhom1.shift_service.core.shift.service.ShiftService;
+import com.nhom1.shift_service.kafka.schedule.ScheduleInfo;
+import com.nhom1.shift_service.kafka.schedule.ScheduleProducer;
+
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class ScheduleService {
+
+    private final ScheduleProducer scheduleProducer;
 
     private final ScheduleRepository scheduleRepository;
     private final ScheduleMapper scheduleMapper;
@@ -69,7 +77,7 @@ public class ScheduleService {
 
         Shift updatingShift = schedule.getShifts().stream()
             .filter(shift-> 
-                shift.getId() == shiftId)
+                shift.getId().equals(shiftId))
             .findFirst()
             .orElseThrow(()-> new EntityNotFoundException("not found shift with id: "+shiftId));
         
@@ -83,9 +91,15 @@ public class ScheduleService {
     public ScheduleId removeShift(Long clinicId, LocalDate appliedDate, Long shiftId){
         Schedule schedule = findById(clinicId, appliedDate);
 
-        schedule.getShifts().removeIf(shift -> shift.getId() == shiftId);
+        Shift removingShift = schedule.getShifts().stream().filter(shift->shift.getId().equals(shiftId)).findFirst()
+            .orElseThrow(()->new EntityNotFoundException("not found shift"));
 
-        return scheduleRepository.save(schedule).getScheduleId();
+        shiftService.removeShift(removingShift);
+
+        schedule.getShifts().remove(removingShift);
+        ScheduleId id = scheduleRepository.save(schedule).getScheduleId();
+
+        return id;
     }
 
     public Schedule findById(Long clinicId, LocalDate appliedDate){
@@ -131,12 +145,14 @@ public class ScheduleService {
 
         return responses;
     }
-        
+    
+    @Transactional
     public void deleteById(Long clinicId, LocalDate appliedDate){
-        scheduleRepository.deleteById(ScheduleId.builder()
-            .clinicId(clinicId)
-            .appliedDate(appliedDate)
-            .build());
+        scheduleRepository.deleteByClinicIdAndAppliedDate(clinicId, appliedDate);
+
+        scheduleProducer.sendDeletedScheduleMessage(
+            ScheduleInfo.builder().appliedDate(appliedDate).clinicId(clinicId).build()
+        );
     }
 
     public void deleteAllById(List<ScheduleId> scheduleIds){

@@ -29,7 +29,7 @@ public class ClinicProducer {
         kafkaTemplate.send(message);
     }
 
-    public void sendUpdatedSpecializationMessage(
+    public void sendUpdatedClinicMessage(
         ClinicInfo info){
         log.info("sending updated clinic: " + info.toString());
 

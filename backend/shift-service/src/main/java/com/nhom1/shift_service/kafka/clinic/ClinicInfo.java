@@ -1,4 +1,4 @@
-package com.nhom1.clinic_service.kafka.clinic;
+package com.nhom1.shift_service.kafka.clinic;
 
 import lombok.Builder;
 

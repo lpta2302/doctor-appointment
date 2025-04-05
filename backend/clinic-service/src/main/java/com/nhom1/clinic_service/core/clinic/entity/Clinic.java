@@ -9,7 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
-import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,11 +42,8 @@ public class Clinic {
     @Size(min=1, max=200, message="name has 1-200 characters")
     private String name;
     
-    @PositiveOrZero(message = "specializationId must not be negative")
     private Long specializationId;
-    
-    @Column(length=200)
-    @Size(min=1, max=200, message="specialization name has 1-200 characters")
+
     @Schema(accessMode=READ_ONLY)
     private String specializationName;
 }

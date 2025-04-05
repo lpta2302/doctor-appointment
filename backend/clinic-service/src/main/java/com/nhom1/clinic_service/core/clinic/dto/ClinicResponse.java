@@ -9,6 +9,7 @@ public record ClinicResponse (
     Long id,
     String code,
     String name,
+    Long specializationId,
     String specializationName,
     SpecializationResponse specialization
 ){}

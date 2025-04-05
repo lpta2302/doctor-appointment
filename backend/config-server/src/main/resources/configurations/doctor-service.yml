@@ -18,10 +18,8 @@ spring:
       bootstrap-servers: ${KAFKA_BOOTSTRAPSERVER:localhost:9092}
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-    properties:
-      spring.json.type.mapping: 
-        specialization-info: com.nhom1.doctor_service.kafka.SpecializationInfo
-        doctor-info: com.nhom1.doctor_service.kafka.DoctorInfo
+      properties:
+        spring.json.type.mapping: specialization-info:com.nhom1.doctor_service.kafka.SpecializationInfo,doctor-info:com.nhom1.doctor_service.kafka.DoctorInfo
 eureka:
   client:
     service-url:

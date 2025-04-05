@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.nhom1.clinic_service.common.PageResponse;
 import com.nhom1.clinic_service.core.clinic.entity.Clinic;
 import com.nhom1.clinic_service.core.clinic.service.ClinicService;
-
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -36,12 +36,12 @@ public class AdminClinicController {
     private final ClinicService clinicService;
 
     @PostMapping
-    public ResponseEntity<Long> create(@RequestBody Clinic clinic) {
+    public ResponseEntity<Long> create(@RequestBody @Valid Clinic clinic) {
         return ResponseEntity.ok(clinicService.create(clinic));
     }
 
     @PutMapping("/{clinicId}")
-    public ResponseEntity<Long> update(@PathVariable Long clinicId, @RequestBody Clinic clinic) {
+    public ResponseEntity<Long> update(@PathVariable Long clinicId, @RequestBody @Valid Clinic clinic) {
         return ResponseEntity.ok(clinicService.update(clinicId, clinic));
     }
 
@@ -79,6 +79,5 @@ public class AdminClinicController {
         clinicService.deleteAllById(clinicIds);
         return ResponseEntity.noContent().build();
     }
-    
     
 }

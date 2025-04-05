@@ -141,6 +141,7 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
       - APPLICATION_CONFIG_DOCTORSERVICE=http://doctor-service:8070
       - APPLICATION_CONFIG_CLINICSERVICE=http://clinic-service:8071
+      - KAFKA_BOOTSTRAP_SERVER=kafka:9092
     depends_on:
       postgres:
         condition: service_healthy

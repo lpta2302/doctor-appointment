@@ -6,6 +6,7 @@ import com.nhom1.shift_service.core.doctor.dto.DoctorResponse;
 import com.nhom1.shift_service.core.shift.dto.ShiftRequest;
 import com.nhom1.shift_service.core.shift.dto.ShiftResponse;
 import com.nhom1.shift_service.core.shift.entity.Shift;
+import com.nhom1.shift_service.kafka.shift.ShiftInfo;
 
 @Component
 public class ShiftMapper {
@@ -26,6 +27,14 @@ public class ShiftMapper {
             .doctorPhoneNumber(doctor.phoneNumber())
             .startTime(request.startTime())
             .endTime(request.endTime())
+            .build();
+    }
+
+    public ShiftInfo convertShiftInfoFrom(Shift updatingShift) {
+        return ShiftInfo.builder()
+            .id(updatingShift.getId())
+            .startTime(updatingShift.getStartTime())
+            .endTime(updatingShift.getEndTime())
             .build();
     }
 }

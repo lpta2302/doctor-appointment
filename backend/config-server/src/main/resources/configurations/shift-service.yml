@@ -8,6 +8,22 @@ spring:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/shift_db}
     username: postgres
     password: postgres
+  kafka:
+    consumer:
+      group-id: shift-specialization,shift-doctor,shift-clinic
+      auto-offset-reset: earliest
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.type.mapping: specialization-info:com.nhom1.shift_service.kafka.specialization.SpecializationInfo,doctor-info:com.nhom1.shift_service.kafka.doctor.DoctorInfo,clinic-info:com.nhom1.shift_service.kafka.clinic.ClinicInfo
+    producer:
+      bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVER:localhost:9092}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: shift-info:com.nhom1.shift_service.kafka.shift.ShiftInfo,schedule-info:com.nhom1.shift_service.kafka.schedule.ScheduleInfo
 
 eureka:
   client:

@@ -8,6 +8,7 @@ import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import com.nhom1.shift_service.core.doctor.client.DoctorClient;
@@ -18,13 +19,15 @@ import com.nhom1.shift_service.core.shift.dto.ShiftResponse;
 import com.nhom1.shift_service.core.shift.entity.Shift;
 import com.nhom1.shift_service.core.shift.mapper.ShiftMapper;
 import com.nhom1.shift_service.core.shift.repository.ShiftRepository;
+import com.nhom1.shift_service.kafka.shift.ShiftProducer;
+
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class ShiftService {
-
+    private final ShiftProducer shiftProducer;
     private final ShiftRepository shiftRepository;
     private final ShiftMapper shiftMapper;
     private final DoctorClient doctorClient;
@@ -94,7 +97,7 @@ public class ShiftService {
     public void update(Schedule schedule, Shift updatingShift, ShiftRequest shiftRequest){
         validateShift(shiftRequest);
 
-        if (shiftRequest.doctorId() != updatingShift.getDoctorId()) {
+        if (!shiftRequest.doctorId().equals(updatingShift.getDoctorId())) {
             DoctorResponse doctorResponse = 
                 doctorClient.findById(shiftRequest.doctorId())
                 .orElseThrow(()-> new EntityNotFoundException(
@@ -125,6 +128,8 @@ public class ShiftService {
         ) {
             throw new IllegalArgumentException("Overlapping shift start at " + updatingShift.getStartTime());
         }
+
+        shiftProducer.sendUpdatedShiftMessage(shiftMapper.convertShiftInfoFrom(updatingShift));
     }
 
     public List<ShiftResponse> findAllBySchedule(Schedule schedule) {
@@ -140,7 +145,7 @@ public class ShiftService {
             ShiftResponse.builder()
                 .id(shift.getId())
                 .doctor(doctors.stream()
-                    .filter(doctor->doctor.id() == shift.getDoctorId())
+                    .filter(doctor->doctor.id().equals(shift.getDoctorId()))
                     .findFirst()
                     .orElseThrow(()-> new EntityNotFoundException("not found doctor with id: " +
                         shift.getDoctorId())))
@@ -163,7 +168,7 @@ public class ShiftService {
             ShiftResponse.builder()
                 .id(shift.getId())
                 .doctor(doctors.stream()
-                    .filter(doctor->doctor.id() == shift.getDoctorId())
+                    .filter(doctor->doctor.id().equals(shift.getDoctorId()))
                     .findFirst()
                     .orElseThrow(()-> new EntityNotFoundException("not found doctor with id: " +
                         shift.getDoctorId())))
@@ -198,6 +203,10 @@ public class ShiftService {
         return lowerBound;
     }
 
+    public void removeShift(Shift removingShift) {
+        shiftProducer.sendDeletedShiftMessage(shiftMapper.convertShiftInfoFrom(removingShift));
+    }
+
     private boolean isOverlappingShift(Shift shift1, Shift shift2){
         return !(shift1.getStartTime().isAfter(shift2.getEndTime())
             || shift1.getStartTime().equals(shift2.getEndTime())
@@ -228,7 +237,7 @@ public class ShiftService {
             ShiftResponse.builder()
                 .id(shift.getId())
                 .doctor(doctors.stream()
-                    .filter(doctor->doctor.id() == shift.getDoctorId())
+                    .filter(doctor->doctor.id().equals(shift.getDoctorId()))
                     .findFirst()
                     .orElseThrow(()-> new EntityNotFoundException("not found doctor with id: " +
                         shift.getDoctorId())))
