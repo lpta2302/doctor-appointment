@@ -41,8 +41,6 @@ export default function BookingForm() {
         setStep(step - 1);
     }
 
-    console.log(formData);
-
     return (
         <div className="container booking-form">
             {step === 1 && (
