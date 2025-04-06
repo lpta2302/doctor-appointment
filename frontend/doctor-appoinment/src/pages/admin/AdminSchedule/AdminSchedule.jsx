@@ -1,6 +1,7 @@
 import ScheduleTable from "../../../component/ScheduleTable/ScheduleTable";
 import ShiftTable from "../../../component/ShiftTable/ShiftTable";
 import React, { useEffect, useState } from "react";
+import "./AdminSchedule.css"
 
 const AdminSchedule = () => {
     const [clinicId, setClinicId] = useState("");
@@ -34,9 +35,12 @@ const AdminSchedule = () => {
     };
 
     return (
-        <div className="container text-center">
-            <div className="row">
-                <div className="mb-3 d-flex gap-2">
+        <div className="container text-center admin-schedule">
+            <div className="row justify-content-center mb-2">
+                <div>
+                    <h1 className="text-center">Schedule</h1>
+                </div>
+                <div className="mb-3 d-flex gap-2 col-5">
                     <input
                         type="text"
                         className="form-control"
