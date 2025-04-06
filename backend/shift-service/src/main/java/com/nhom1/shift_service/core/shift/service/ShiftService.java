@@ -83,8 +83,8 @@ public class ShiftService {
         int iNearestShift = findNearestShift(shifts, newShift);
 
         if (isOverlappingShift(shifts.get(iNearestShift), newShift) ||
-            (iNearestShift + 1 < shifts.size() && 
-                isOverlappingShift(shifts.get(iNearestShift + 1), newShift))
+            ((iNearestShift + 1 < shifts.size() && 
+                isOverlappingShift(shifts.get(iNearestShift + 1), newShift)))
         ) {
             throw new IllegalArgumentException("Overlapping shift start at " + newShift.getStartTime());
         }
