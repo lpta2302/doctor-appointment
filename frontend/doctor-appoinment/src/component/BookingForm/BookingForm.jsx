@@ -7,54 +7,91 @@ export default function BookingForm() {
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
         form: {
-            name: "",
-            phone: "",
-            email: "",
-            location: "",
-            description: "",
-            date: "",
-            department: "",
-            doctor: ""
+            appointmentDate: "",
+            appointmentTime: "12:00",
+            clinicId: null,
+            isOldPatient: false,
+            patient: {}  // Chứa thông tin patient sẽ được cập nhật sau
         }
     });
-    const [showForm, setShowForm] = useState(true);
 
-    const handleChange = (e) => {
-        const data = { ...formData.form };
-        data[e.target.name] = e.target.value;
-        setFormData({
-            form: data
-        });
-    }
+    // Khởi tạo patient state
+    const [patient, setPatient] = useState({
+        gender: "MALE",
+        fullname: "",
+        address: "",
+        phoneNumber: "",
+        dateOfBirth: ""
+    });
 
+    // Hàm cập nhật thông tin bệnh nhân
+    const handlePatientChange = (e) => {
+        const { name, value } = e.target;
+        setPatient((prevPatient) => ({
+            ...prevPatient,
+            [name]: value, // Cập nhật đúng theo name (gender, fullname, phoneNumber, ...)
+        }));
+    };
+
+    // Hàm đi qua các bước và lưu thông tin patient vào formData
     const goNext = () => {
-        if (step == 1) {
-            if (formData.form.name != "" && formData.form.phone != "" && formData.form.email != "" && formData.form.location != "") {
-                setStep(step + 1);
-            } else {
-                alert("Error");
+        if (step === 1) {
+            const { fullname, phoneNumber, address, gender, dateOfBirth } = patient;
+            if (!fullname || !phoneNumber || !address || !gender || !dateOfBirth) {
+                alert("Vui lòng nhập đầy đủ thông tin cá nhân.");
+                return;
             }
-        }
-    }
 
-    const goBack = () => {
-        setStep(step - 1);
-    }
+            // Lưu thông tin patient vào formData
+            setFormData((prevFormData) => ({
+                form: {
+                    ...prevFormData.form,
+                    patient: patient  // Lưu thông tin patient vào formData
+                }
+            }));
+        }
+        setStep(step + 1); // Chuyển sang bước tiếp theo
+    };
+
+    // Hàm cập nhật các thông tin còn lại trong formData
+    const handleAppointmentChange = (e) => {
+        const { name, value } = e.target;
+
+        // Chuyển giá trị clinicId thành số
+        if (name === 'clinicId') {
+            setFormData((prevFormData) => ({
+                form: {
+                    ...prevFormData.form,
+                    [name]: value ? Number(value) : null,  // Chuyển giá trị clinicId thành số
+                }
+            }));
+        } else {
+            setFormData((prevFormData) => ({
+                form: {
+                    ...prevFormData.form,
+                    [name]: value,
+                }
+            }));
+        }
+    };
+
+
+    console.log(formData);
 
     return (
         <div className="container booking-form">
             {step === 1 && (
                 <PersonalInfoForm
-                    handleChange={handleChange}
-                    formData={formData}
+                    handlePatientChange={handlePatientChange}
+                    patient={patient}  // Truyền state patient xuống form
                     goNext={goNext}
                 />
             )}
 
             {step === 2 && (
                 <AppointmentForm
-                    handleChange={handleChange}
-                    formData={formData}
+                    formData={formData} // Truyền formData xuống AppointmentForm
+                    handleAppointmentChange={handleAppointmentChange} // Hàm cập nhật các giá trị của appointment
                     goNext={goNext}
                 />
             )}
@@ -65,32 +102,3 @@ export default function BookingForm() {
         </div>
     );
 }
-
-
-/*
-
-N   A
-G  OI
-U H P
-YN  H
-E   U
-
-N  H  U
-G NO H
-UE AP
-Y  I
-
-N E A U
-GYNOIH
-U H P
-
-13
-
-4 - 3 - 1
-
-5 - 2 - 3
-
-3 - 4 - 1
-
-
-*/

@@ -1,97 +1,214 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 
-const AppointmentForm = ({ formData, handleChange, goNext }) => {
+const AppointmentForm = ({ formData, handleAppointmentChange, goNext }) => {
+    const [specializations, setSpecializations] = useState([]);
+    const [specialization, setSpecialization] = useState("");
+    const [clinics, setClinics] = useState([]);
+    const [clinic, setClinic] = useState("");
+    const [times, setTimes] = useState([]);
 
-    const [departments, setDepartments] = useState([]);
+    const getAllSpecializations = async () => {
+        try {
+            const response = await fetch(`/api/v1/specializations?page=0&size=15`, {
+                method: "GET"
+            })
 
-    useEffect(() => {
-        if (formData.form.date) {
-            fetchGetSpecializations();
-        }
-    }, [formData.form.date]);
-
-    const fetchGetSpecializations = async (data) => {
-        const response = await fetch(`${SERVICE_API}/requirement`, {
-            method: "POST",
-            header: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data),
-        });
-
-        if (response.ok) {
+            if (!response.ok) {
+                throw new Error("Failed to fetch specializations");
+            }
             const data = await response.json();
-
-            setDepartments(data.content);
+            setSpecializations(data.content);  // lưu data vào state
+        } catch (error) {
+            console.error('error: ', error);
         }
     }
 
-    const departmentList = departments.map((department) => {
-        return (
-            <option key={department.code} value={department.code}>
-                {department.name}
-            </option>
-        )
-    });
+    useEffect(() => {
+        getAllSpecializations();
+    }, [])
+
+    const getAllClinics = async () => {
+        if (!specialization) return;
+
+        try {
+            const response = await fetch(`/api/v1/clinics/search?page=0&size=15&code=dfgd&name=dfgd&specializationId=${specialization}`, {
+                method: "GET",
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch clinics");
+            }
+
+            const data = await response.json();
+            setClinics(data.content);
+        } catch (error) {
+            console.error('Error fetching clinics:', error);
+        }
+    };
+
+    useEffect(() => {
+        getAllClinics();
+    }, [specialization])
+
+    const getTime = async () => {
+        if (!formData.form.clinicId || formData.form.appointmentDate == "") return;
+
+        try {
+            const response = await fetch(`/api/v1/appointments/${formData.form.clinicId}/${formData.form.appointmentDate}/time`, {
+                method: "GET",
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch clinics");
+            }
+
+            const data = await response.json();
+            setTimes(data);
+            // console.log(data);
+        } catch {
+            alert("Don't have any shifts !");
+        }
+    }
+
+    const addAppointment = async () => {
+        const { appointmentDate, appointmentTime, clinicId, isOldPatient, patient } = formData.form;
+        const bodyData = {
+            appointmentDate,
+            appointmentTime,
+            clinicId,
+            isOldPatient,
+            patient: {
+                gender: patient.gender,
+                fullname: patient.fullname,
+                address: patient.address,
+                phoneNumber: patient.phoneNumber,
+                dateOfBirth: patient.dateOfBirth,
+            }
+        };
+
+        try {
+            const response = await fetch(`/api/v1/appointments`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(bodyData)  // Dữ liệu được gửi lên server
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to add appointment");
+            }
+
+            alert("Success !");
+            goNext();
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Failed !");
+        }
+    };
+
+
+    useEffect(() => {
+        // console.log(formData.form.clinicId, formData.form.appointmentDate);
+        getTime();
+    }, [formData.form.clinicId, formData.form.appointmentDate])
+
+    console.log(formData);
 
     return (
         <form action="" className="row">
             <div className="mt-3 mb-2 mx-2">
-                <label htmlFor="date" className="form-label">
-                    Date:
+                <label htmlFor="appointmentDate" className="form-label">
+                    Appointment Date:
                 </label>
-
                 <input
                     type="date"
                     className="form-control"
-                    id="date"
-                    name="date"
-                    onChange={handleChange}
-                    // value=""
+                    id="appointmentDate"
+                    name="appointmentDate"
+                    value={formData.form.appointmentDate}
+                    onChange={handleAppointmentChange}
                     required
                 />
             </div>
 
-            {formData.form.date != "" && (
+            {formData.form.appointmentDate != "" && (
                 <div className="my-2 mx-2">
-                    <label
-                        htmlFor="department"
-                        className="form-label"
-                    >
-                        Department:
+                    <label htmlFor="specializationId" className="form-label">
+                        Department (Khoa):
                     </label>
-                    
                     <select
-                        className="form-select"
-                        onChange={handleChange}
-                        id="department"
-                        name="department"
+                        className="form-control"
+                        id="specializationId"
+                        name="specializationId"
+                        value={specialization || ''}
+                        onChange={(e) => { setSpecialization(e.target.value) }}
+                        required
                     >
-                        <option>-Select All-</option>
-                        {departmentList}
+                        <option value="">-- Select Department --</option>
+                        {specializations.map((item) => (
+                            <option key={item.id} value={item.id}>
+                                {item.name} - {item.price.toLocaleString()} VND
+                            </option>
+                        ))}
                     </select>
                 </div>
             )}
 
-            {formData.form.department && (
-                <div className="mt-2 mb-3 mx-2">
-                    <label htmlFor="doctor" className="form-label">
-                        Doctor:
+            {specialization != "" && (
+                <div className="my-2 mx-2">
+                    <label htmlFor="clinicId" className="form-label">
+                        Clinic Name:
                     </label>
-                    <select className="form-select" onChange={handleChange} id="doctor" name="doctor">
-                        <option>-Select All-</option>
-                        <option>Dr. John Doe</option>
-                        <option>Dr. Jane Doe</option>
-                        <option>Dr. Michael Doe</option>
+                    <select
+                        className="form-control"
+                        id="clinicId"
+                        name="clinicId"
+                        value={formData.form.clinicId || ''}  // Giá trị của clinicId có thể là null hoặc số
+                        onChange={handleAppointmentChange}  // Hàm sẽ xử lý thay đổi giá trị
+                        required
+                    >
+                        <option value="">-- Select Clinic --</option>
+                        {clinics.map((item) => (
+                            <option key={item.id} value={item.id}>
+                                {item.name}
+                            </option>
+                        ))}
                     </select>
                 </div>
             )}
 
-            {formData.form.doctor && (
-                <button type="button" className="btn-submit m-3" onClick={goNext}>Next</button>
+            {formData.form.clinicId && (
+                <div className="my-2 mx-2">
+                    <label htmlFor="appointmentTime" className="form-label">
+                        Appointment Time:
+                    </label>
+                    <select
+                        className="form-control"
+                        id="appointmentTime"
+                        name="appointmentTime"
+                        onChange={handleAppointmentChange}
+                        required
+                    >
+                        <option value="">-- Select Appointment Time --</option>
+                        {times
+                            .filter((item) => item.isAvailable)  // Lọc ra các thời gian có isAvailable là true
+                            .map((item) => (
+                                <option key={item.time} value={item.time.slice(0, 5)}>
+                                    {item.time.slice(0, 5)}
+                                </option>
+                            ))}
+                    </select>
+                </div>
             )}
+
+
+
+            <button type="button" className="btn-submit m-3" onClick={addAppointment}>
+                Next
+            </button>
         </form>
-    )
-}
+    );
+};
 
 export default AppointmentForm;
