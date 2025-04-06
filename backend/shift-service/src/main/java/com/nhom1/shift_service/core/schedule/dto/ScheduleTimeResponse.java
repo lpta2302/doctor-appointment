@@ -7,6 +7,7 @@ import lombok.Builder;
 @Builder
 public record ScheduleTimeResponse(
     String clinicName,
+    Long specializationId,
     String specializationName,
     Map<LocalTime, LocalTime> shiftsTime
 ) {}

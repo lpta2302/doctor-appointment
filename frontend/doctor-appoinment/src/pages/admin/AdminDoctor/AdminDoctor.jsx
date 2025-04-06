@@ -181,7 +181,7 @@ const AdminDoctor = () => {
                 qualification: data.qualification,
                 dateOfBirth: data.dateOfBirth,
                 yearsOfExperience: data.yearsOfExperience,
-                specializationIds: data.specializations.map(s => s.id)
+                specializationIds: specializations.map(s=>s.id)
             });
         } catch (error) {
             alert("Update failed !");

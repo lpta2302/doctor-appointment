@@ -44,7 +44,7 @@ public class ShiftService {
                 doctors.put(d.id(), d));
 
         final NavigableSet<Shift> newShifts = new TreeSet<>(
-            (s1, s2) -> s1.getStartTime().compareTo(s2.getStartTime())
+            (shift1, s2) -> shift1.getStartTime().compareTo(s2.getStartTime())
         );
 
         shiftRequests.forEach(shiftRequest->{
@@ -83,8 +83,8 @@ public class ShiftService {
         int iNearestShift = findNearestShift(shifts, newShift);
 
         if (isOverlappingShift(shifts.get(iNearestShift), newShift) ||
-            (iNearestShift + 1 < shifts.size() && 
-                isOverlappingShift(shifts.get(iNearestShift + 1), newShift))
+            ((iNearestShift + 1 < shifts.size() && 
+                isOverlappingShift(shifts.get(iNearestShift + 1), newShift)))
         ) {
             throw new IllegalArgumentException("Overlapping shift start at " + newShift.getStartTime());
         }
@@ -208,10 +208,8 @@ public class ShiftService {
     }
 
     private boolean isOverlappingShift(Shift shift1, Shift shift2){
-        return !(shift1.getStartTime().isAfter(shift2.getEndTime())
-            || shift1.getStartTime().equals(shift2.getEndTime())
-            || shift1.getEndTime().isBefore(shift1.getStartTime())
-            || shift1.getEndTime().equals(shift2.getStartTime()));
+        return shift1.getStartTime().isBefore(shift2.getEndTime()) &&
+            shift1.getEndTime().isAfter(shift2.getStartTime());
     }
 
     public void validateShift(ShiftRequest shift){

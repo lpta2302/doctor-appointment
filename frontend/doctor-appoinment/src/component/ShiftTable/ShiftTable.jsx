@@ -1,6 +1,6 @@
 const ShiftTable = ({ schedules, error }) => {
     console.log("ShiftTable", schedules);
-
+    
     return (
         <div className="schedule-table">
             <button className="btn btn-primary mb-3">

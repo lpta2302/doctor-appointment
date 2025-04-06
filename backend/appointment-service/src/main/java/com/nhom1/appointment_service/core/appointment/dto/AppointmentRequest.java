@@ -18,9 +18,6 @@ public record AppointmentRequest(
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     LocalTime appointmentTime,
 
-    @PositiveOrZero(message = "specialization id must be equal or greater than 0")
-    Long specializationId,
-
     @PositiveOrZero(message = "clinic id must be equal or greater than 0")
     Long clinicId,
 

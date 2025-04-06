@@ -208,7 +208,7 @@ const AdminClinic = () => {
                     <tbody>
                         {clinics.map((clinic, index) => (
                             <tr key={index}>
-                                <RecordItem data={{ id: clinic.id, code: clinic.code, name: clinic.name, specializationName: clinic.specialization.name, specializationId: clinic.specialization.id }} />
+                                <RecordItem data={{ id: clinic.id, code: clinic.code, name: clinic.name, specializationName: clinic.specialization?.name || "not assigned", specializationId: clinic.specialization?.id || "not assigned" }} />
                                 <td>
                                     <button className="btn btn-delete" onClick={() => {deleteClinic(clinic.id)}}><i className="fa-solid fa-trash"></i></button>
                                     <button className="btn btn-update"><i className="fa-solid fa-pen-to-square"></i></button>
