@@ -208,10 +208,8 @@ public class ShiftService {
     }
 
     private boolean isOverlappingShift(Shift shift1, Shift shift2){
-        return !(shift1.getStartTime().isAfter(shift2.getEndTime())
-            || shift1.getStartTime().equals(shift2.getEndTime())
-            || shift1.getEndTime().isBefore(shift1.getStartTime())
-            || shift1.getEndTime().equals(shift2.getStartTime()));
+        return s1.getStartTime().isBefore(s2.getEndTime()) &&
+            s1.getEndTime().isAfter(s2.getStartTime());
     }
 
     public void validateShift(ShiftRequest shift){
