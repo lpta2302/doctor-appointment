@@ -1,0 +1,22 @@
+footer {
+    height: 40vh;
+    background-color: #446e92;
+}
+
+.footer__logo {
+    margin-top: 30px;
+}
+
+.footer__infomation > div {
+    padding: 20px;
+    justify-content: space-around;
+    color: #ffffff;
+    font-weight: 350;
+    font-size: 1rem;
+}
+
+.footer__infomation > div .sub-nav {
+    font-weight: 500;
+    font-size: 1.3rem;
+    margin-bottom: 30px;
+}

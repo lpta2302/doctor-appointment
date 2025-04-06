@@ -1,0 +1,23 @@
+.booking {
+    min-height: 100vh;
+}
+
+.booking h4 {
+    margin-left: 5rem;
+    user-select: none;
+}
+
+.booking .line {
+    height: 0.1px;
+    background-color: rgba(0, 0, 0, 0.9);
+    box-shadow: 1px 3px 6px rgba(0, 0, 0, 0.9);
+}
+
+.booking .profile {
+    background-color: #ffe6b6;
+    color: #333;
+    font-weight: 500;
+    border-radius: 1em;
+    transition: transform 0.2s;
+    box-shadow: 1px 3px 6px rgba(0, 0, 0, 0.3);
+}
