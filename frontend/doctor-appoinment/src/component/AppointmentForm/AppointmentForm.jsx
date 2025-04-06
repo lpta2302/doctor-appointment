@@ -1,12 +1,9 @@
-import {useState, useEffect} from "react"
-import {doctorService} from "../../server/server"
+import { useState, useEffect } from "react"
 
-const SERVICE_API = doctorService.CLINIC_SERVICE_API;
-
-const AppointmentForm = ({formData, handleChange, goNext}) => {
+const AppointmentForm = ({ formData, handleChange, goNext }) => {
 
     const [departments, setDepartments] = useState([]);
-    
+
     useEffect(() => {
         if (formData.form.date) {
             fetchGetSpecializations();
@@ -57,10 +54,19 @@ const AppointmentForm = ({formData, handleChange, goNext}) => {
 
             {formData.form.date != "" && (
                 <div className="my-2 mx-2">
-                    <label htmlFor="department" className="form-label">
+                    <label
+                        htmlFor="department"
+                        className="form-label"
+                    >
                         Department:
                     </label>
-                    <select className="form-select" onChange={handleChange} id="department" name="department">
+                    
+                    <select
+                        className="form-select"
+                        onChange={handleChange}
+                        id="department"
+                        name="department"
+                    >
                         <option>-Select All-</option>
                         {departmentList}
                     </select>

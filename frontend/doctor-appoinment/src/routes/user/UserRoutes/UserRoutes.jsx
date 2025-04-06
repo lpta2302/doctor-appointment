@@ -10,7 +10,7 @@ export default function UserRoutes() {
         <UserLayout>
             <Routes>
                 <Route path="/" element={<Home />} />
-                {/* <Route path="/footer" element={<Footer />} /> */}
+                <Route path="/footer" element={<Footer />} />
                 <Route path="/booking" element={<Booking />} />
                 <Route path="/schedule" element={<Schedule />} />
             </Routes>

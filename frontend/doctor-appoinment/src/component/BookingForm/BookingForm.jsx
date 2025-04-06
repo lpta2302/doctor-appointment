@@ -45,11 +45,25 @@ export default function BookingForm() {
 
     return (
         <div className="container booking-form">
-            {step === 1 && (<PersonalInfoForm handleChange={handleChange} formData={formData} goNext={goNext} />)}
+            {step === 1 && (
+                <PersonalInfoForm
+                    handleChange={handleChange}
+                    formData={formData}
+                    goNext={goNext}
+                />
+            )}
 
-            {step === 2 && (<AppointmentForm handleChange={handleChange} formData={formData} goNext={goNext} />)}
+            {step === 2 && (
+                <AppointmentForm
+                    handleChange={handleChange}
+                    formData={formData}
+                    goNext={goNext}
+                />
+            )}
 
-            {step === 3 && <h1>Thanh toán mẹ m đi!!!</h1>}
+            {step === 3 && (
+                <h1>Đăng ký thành công !!!</h1>
+            )}
         </div>
     );
 }

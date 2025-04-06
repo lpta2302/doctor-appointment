@@ -21,7 +21,12 @@ export default defineConfig({
         target: "http://localhost:8071",
         changeOrigin: true,
         secure: false
-      }
+      },
+      "/api/v1/admin/schedules": {
+        target: "http://localhost:8072",
+        changeOrigin: true,
+        secure: false
+      },
     }
   }
 })
