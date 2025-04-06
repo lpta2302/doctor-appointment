@@ -58,7 +58,7 @@ public class AppointmentService {
             .appointmentDate(request.appointmentDate())
             .appointmentTime(request.appointmentTime())
             .clinicId(request.clinicId())
-            .specializationId(request.specializationId())
+            .specializationId(scheduleResponse.specializationId())
             .clinicName(scheduleResponse.clinicName())
             .specializationName(scheduleResponse.specializationName())
             .status(ACCEPTED)

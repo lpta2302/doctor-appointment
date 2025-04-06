@@ -1,5 +1,5 @@
 import React from "react";
-import "./RecordItem.css"
+import "./RecordItem.css";
 
 const RecordItem = (props) => {
     const entries = Object.entries(props.data);
@@ -8,13 +8,15 @@ const RecordItem = (props) => {
         <>
             {entries.map(([_, value], index) => (
                 <td key={index}>
-                    {typeof value === "object" && value !== null
-                        ? JSON.stringify(value)
-                        : value}
+                    {Array.isArray(value) && value.length === 0
+                        ? ""
+                        : typeof value === "object" && value !== null
+                            ? JSON.stringify(value)
+                            : value}
                 </td>
             ))}
         </>
     );
-}
+};
 
 export default RecordItem;

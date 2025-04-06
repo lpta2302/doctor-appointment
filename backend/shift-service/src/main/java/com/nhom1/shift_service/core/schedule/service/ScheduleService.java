@@ -168,6 +168,7 @@ public class ScheduleService {
 
         return ScheduleTimeResponse.builder()
             .clinicName(schedule.getClinicName())
+            .specializationId(schedule.getSpecializationId())
             .specializationName(schedule.getSpecializationName())
             .shiftsTime(timeMap)
             .build();
