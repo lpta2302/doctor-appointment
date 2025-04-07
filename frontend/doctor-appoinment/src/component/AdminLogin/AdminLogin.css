@@ -1,47 +1,41 @@
+/* AdminLogin.css */
+
 .login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f4f4f4;
-}
-
-.login-card {
-    padding: 30px;
-    width: 350px;
+    height: 80vh;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    flex-direction: column;
     text-align: center;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    background-color: #fff;
-}
-
-.login-logo-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 15px;
-}
-
-.login-logo {
-    width: 80px;
-    height: 80px;
-    background-color: #e0e0e0;
-    border-radius: 50%;
-    padding: 10px;
-}
-
-.login-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-}
-
-.login-form input {
-    height: 45px;
-    font-size: 1rem;
-}
-
-.login-button {
-    width: 100%;
-    font-size: 1rem;
+    animation: fadeIn 1s ease-in-out;
+  }
+  
+  .login-container h1 {
+    font-size: 3rem;
     font-weight: bold;
-}
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    margin-top: 20px;
+    animation: slideDown 1s ease-in-out;
+  }
+  
+  .login-container img {
+    width: 120px;
+    margin-bottom: 20px;
+    animation: zoomIn 1s ease-in-out;
+  }
+  
+  /* Hiệu ứng xuất hiện */
+  @keyframes fadeIn {
+    0% { opacity: 0; transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  
+  @keyframes slideDown {
+    0% { opacity: 0; transform: translateY(-50px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes zoomIn {
+    0% { opacity: 0; transform: scale(0.5); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  

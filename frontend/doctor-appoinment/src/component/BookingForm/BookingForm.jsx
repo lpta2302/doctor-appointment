@@ -117,7 +117,6 @@ export default function BookingForm() {
                     </button>
                 </div>
             )}
-
         </div>
     );
 }

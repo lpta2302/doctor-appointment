@@ -32,6 +32,11 @@ export default defineConfig({
         changeOrigin: true,
         secure: false
       },
+      "/api/v1/schedules": {
+        target: "http://localhost:8072",
+        changeOrigin: true,
+        secure: false
+      },
       "/api/v1/doctors": {
         target: "http://localhost:8070",
         changeOrigin: true,
