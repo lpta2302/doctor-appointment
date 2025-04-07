@@ -1,7 +1,8 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AppointmentForm from "../AppointmentForm/AppointmentForm";
 import PersonalInfoForm from "../PersonalInfoForm/PersonalInfoForm";
 import "./BookingForm.css";
-import { useState } from "react";
 
 export default function BookingForm() {
     const [step, setStep] = useState(1);
@@ -11,11 +12,10 @@ export default function BookingForm() {
             appointmentTime: "12:00",
             clinicId: null,
             isOldPatient: false,
-            patient: {}  // Chứa thông tin patient sẽ được cập nhật sau
+            patient: {}
         }
     });
 
-    // Khởi tạo patient state
     const [patient, setPatient] = useState({
         gender: "MALE",
         fullname: "",
@@ -23,17 +23,32 @@ export default function BookingForm() {
         phoneNumber: "",
         dateOfBirth: ""
     });
+    const navigate = useNavigate();
+    const [countdown, setCountdown] = useState(5);
 
-    // Hàm cập nhật thông tin bệnh nhân
+    useEffect(() => {
+        if (step === 3) {
+            const interval = setInterval(() => {
+                setCountdown((prev) => prev - 1);
+            }, 1000);
+
+            if (countdown === 0) {
+                clearInterval(interval);
+                navigate("/"); // chuyển về trang home
+            }
+
+            return () => clearInterval(interval);
+        }
+    }, [step, countdown, navigate]);
+
     const handlePatientChange = (e) => {
         const { name, value } = e.target;
-        setPatient((prevPatient) => ({
-            ...prevPatient,
-            [name]: value, // Cập nhật đúng theo name (gender, fullname, phoneNumber, ...)
+        setPatient((prev) => ({
+            ...prev,
+            [name]: value,
         }));
     };
 
-    // Hàm đi qua các bước và lưu thông tin patient vào formData
     const goNext = () => {
         if (step === 1) {
             const { fullname, phoneNumber, address, gender, dateOfBirth } = patient;
@@ -42,63 +57,67 @@ export default function BookingForm() {
                 return;
             }
 
-            // Lưu thông tin patient vào formData
-            setFormData((prevFormData) => ({
+            setFormData((prev) => ({
                 form: {
-                    ...prevFormData.form,
-                    patient: patient  // Lưu thông tin patient vào formData
+                    ...prev.form,
+                    patient: patient,
                 }
             }));
         }
-        setStep(step + 1); // Chuyển sang bước tiếp theo
+        setStep(step + 1);
     };
 
-    // Hàm cập nhật các thông tin còn lại trong formData
+    const goBack = () => setStep(step - 1);
+
     const handleAppointmentChange = (e) => {
         const { name, value } = e.target;
-
-        // Chuyển giá trị clinicId thành số
-        if (name === 'clinicId') {
-            setFormData((prevFormData) => ({
-                form: {
-                    ...prevFormData.form,
-                    [name]: value ? Number(value) : null,  // Chuyển giá trị clinicId thành số
-                }
-            }));
-        } else {
-            setFormData((prevFormData) => ({
-                form: {
-                    ...prevFormData.form,
-                    [name]: value,
-                }
-            }));
-        }
+        setFormData((prev) => ({
+            form: {
+                ...prev.form,
+                [name]: name === 'clinicId' ? Number(value) : value,
+            }
+        }));
     };
 
+    useEffect(() => {
+        if (step === 3) {
+            const timer = setTimeout(() => {
+                window.location.href = "/"; // hoặc navigate('/') nếu dùng react-router
+            }, 5000);
 
-    console.log(formData);
+            return () => clearTimeout(timer); // cleanup
+        }
+    }, [step]);
 
     return (
         <div className="container booking-form">
             {step === 1 && (
                 <PersonalInfoForm
                     handlePatientChange={handlePatientChange}
-                    patient={patient}  // Truyền state patient xuống form
+                    patient={patient}
                     goNext={goNext}
                 />
             )}
 
             {step === 2 && (
                 <AppointmentForm
-                    formData={formData} // Truyền formData xuống AppointmentForm
-                    handleAppointmentChange={handleAppointmentChange} // Hàm cập nhật các giá trị của appointment
+                    formData={formData}
+                    handleAppointmentChange={handleAppointmentChange}
                     goNext={goNext}
+                    goBack={goBack}
                 />
             )}
 
             {step === 3 && (
-                <h1>Đăng ký thành công !!!</h1>
+                <div className="popup-success">
+                    <h1>Đăng ký thành công !!!</h1>
+                    <p>Sẽ quay về trang chủ sau {countdown} giây...</p>
+                    <button type="button" className="btn-submit m-3" onClick={() => {navigate("/");}}>
+                        Back
+                    </button>
+                </div>
             )}
+
         </div>
     );
 }

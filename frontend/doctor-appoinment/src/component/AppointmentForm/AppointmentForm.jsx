@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 
-const AppointmentForm = ({ formData, handleAppointmentChange, goNext }) => {
+const AppointmentForm = ({ formData, handleAppointmentChange, goNext, goBack }) => {
     const [specializations, setSpecializations] = useState([]);
     const [specialization, setSpecialization] = useState("");
     const [clinics, setClinics] = useState([]);
-    const [clinic, setClinic] = useState("");
     const [times, setTimes] = useState([]);
 
     const getAllSpecializations = async () => {
@@ -96,14 +95,14 @@ const AppointmentForm = ({ formData, handleAppointmentChange, goNext }) => {
             });
 
             if (!response.ok) {
-                throw new Error("Failed to add appointment");
+                throw new Error("Appointment booking failed");
             }
 
             alert("Success !");
             goNext();
         } catch (error) {
             console.error("Error:", error);
-            alert("Failed !");
+            alert("Appointment booking failed !");
         }
     };
 
@@ -202,7 +201,9 @@ const AppointmentForm = ({ formData, handleAppointmentChange, goNext }) => {
                 </div>
             )}
 
-
+            <button type="button" className="btn-submit m-3" onClick={goBack}>
+                Back
+            </button>
 
             <button type="button" className="btn-submit m-3" onClick={addAppointment}>
                 Next
