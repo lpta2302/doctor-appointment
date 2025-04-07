@@ -197,7 +197,9 @@ public class ShiftService {
                 iLeft = iMid + 1;
             } else if (currentShift.getStartTime().isAfter(targetShift.getStartTime())) {
                 iRight = iMid - 1;
-            } 
+            } else {
+                return iMid;
+            }
         }
 
         return lowerBound;
@@ -207,10 +209,11 @@ public class ShiftService {
         shiftProducer.sendDeletedShiftMessage(shiftMapper.convertShiftInfoFrom(removingShift));
     }
 
-    private boolean isOverlappingShift(Shift shift1, Shift shift2){
-        return shift1.getStartTime().isBefore(shift2.getEndTime()) &&
-            shift1.getEndTime().isAfter(shift2.getStartTime());
+    private boolean isOverlappingShift(Shift s1, Shift s2) {
+        return !(s1.getEndTime().compareTo(s2.getStartTime()) <= 0 || 
+                 s1.getStartTime().compareTo(s2.getEndTime()) >= 0);
     }
+    
 
     public void validateShift(ShiftRequest shift){
         if (shift.startTime().isAfter(shift.endTime())) {
