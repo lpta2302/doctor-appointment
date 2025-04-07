@@ -31,27 +31,27 @@ A simple microservices application for booking clinic appointments with doctor a
 ```bash
 git clone https://github.com/lpta2302/doctor-appointment.git
 ```
-Then open the repo folder in your favorite terminal
+Then open the repo folder in your favorite terminal  
 (PowerShell, Git Bash, or ideally a Unix/Linux environment)
 
 #### 📌 In PowerShell
-cd _bin
+cd _bin  
 .\run.ps1
 
 #### 🐧 In Git Bash or Unix/Linux environment
-cd _bin
-chmod +x run.sh
+cd _bin  
+chmod +x run.sh  
 ./run.sh
 
 #### 🧩 OR Manual Setup
 📦 Frontend
 
-cd frontend
-npm install
+cd frontend  
+npm install  
 npm run dev
 
 ⚙️ Backend
 
-cd backend
-(Package each service and server then start with Docker)
+cd backend  
+(Package each service and server then start with Docker)  
 docker compose up
