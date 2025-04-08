@@ -1,98 +1,134 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AppointmentForm from "../AppointmentForm/AppointmentForm";
 import PersonalInfoForm from "../PersonalInfoForm/PersonalInfoForm";
 import "./BookingForm.css";
-import { useState } from "react";
 
 export default function BookingForm() {
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
         form: {
-            name: "",
-            phone: "",
-            email: "",
-            location: "",
-            description: "",
-            date: "",
-            department: "",
-            doctor: ""
+            appointmentDate: "",
+            appointmentTime: "12:00",
+            clinicId: null,
+            isOldPatient: false,
+            patient: {}
         }
     });
-    const [showForm, setShowForm] = useState(true);
 
-    const handleChange = (e) => {
-        const data = { ...formData.form };
-        data[e.target.name] = e.target.value;
-        setFormData({
-            form: data
-        });
-    }
+    const [patient, setPatient] = useState({
+        gender: "MALE",
+        fullname: "",
+        address: "",
+        phoneNumber: "",
+        dateOfBirth: ""
+    });
+    const navigate = useNavigate();
+    const [countdown, setCountdown] = useState(5);
+
+    useEffect(() => {
+        if (step === 3) {
+            const interval = setInterval(() => {
+                setCountdown((prev) => prev - 1);
+            }, 1000);
+
+            if (countdown === 0) {
+                clearInterval(interval);
+                navigate("/");
+            }
+
+            return () => clearInterval(interval);
+        }
+    }, [step, countdown, navigate]);
+
+    const handlePatientChange = (e) => {
+        const { name, value } = e.target;
+        setPatient((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handleOldPatientChange = (e) => {
+        const isChecked = e.target.checked;
+        setFormData((prev) => ({
+            form: {
+                ...prev.form,
+                isOldPatient: isChecked,
+            }
+        }));
+    };
 
     const goNext = () => {
-        if (step == 1) {
-            if (formData.form.name != "" && formData.form.phone != "" && formData.form.email != "" && formData.form.location != "") {
-                setStep(step + 1);
-            } else {
-                alert("Error");
+        if (step === 1) {
+            const { fullname, phoneNumber, address, gender, dateOfBirth } = patient;
+            if (!fullname || !phoneNumber || !address || !gender || !dateOfBirth) {
+                alert("Vui lòng nhập đầy đủ thông tin cá nhân.");
+                return;
             }
+
+            setFormData((prev) => ({
+                form: {
+                    ...prev.form,
+                    patient: patient,
+                }
+            }));
         }
-    }
+        setStep(step + 1);
+    };
 
-    const goBack = () => {
-        setStep(step - 1);
-    }
+    const goBack = () => setStep(step - 1);
 
-    console.log(formData);
+    const handleAppointmentChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            form: {
+                ...prev.form,
+                [name]: name === 'clinicId' ? Number(value) : value,
+            }
+        }));
+    };
+
+    // useEffect(() => {
+    //     if (step === 3) {
+    //         const timer = setTimeout(() => {
+    //             window.location.href = "/";
+    //         }, 5000);
+
+    //         return () => clearTimeout(timer);
+    //     }
+    // }, [step]);
 
     return (
         <div className="container booking-form">
             {step === 1 && (
                 <PersonalInfoForm
-                    handleChange={handleChange}
-                    formData={formData}
+                    handlePatientChange={handlePatientChange}
+                    patient={patient}
                     goNext={goNext}
+                    isOldPatient={formData.form.isOldPatient}
+                    handleOldPatientChange={handleOldPatientChange}
                 />
             )}
 
             {step === 2 && (
                 <AppointmentForm
-                    handleChange={handleChange}
                     formData={formData}
+                    handleAppointmentChange={handleAppointmentChange}
                     goNext={goNext}
+                    goBack={goBack}
                 />
             )}
 
             {step === 3 && (
-                <h1>Đăng ký thành công !!!</h1>
+                <div className="popup-success">
+                    <h1>Đăng ký thành công !!!</h1>
+                    <p>Sẽ quay về trang chủ sau {countdown} giây...</p>
+                    <button type="button" className="btn-submit m-3" onClick={() => { navigate("/"); }}>
+                        Back
+                    </button>
+                </div>
             )}
         </div>
     );
 }
-
-
-/*
-
-N   A
-G  OI
-U H P
-YN  H
-E   U
-
-N  H  U
-G NO H
-UE AP
-Y  I
-
-N E A U
-GYNOIH
-U H P
-
-13
-
-4 - 3 - 1
-
-5 - 2 - 3
-
-3 - 4 - 1
-
-
-*/

@@ -41,6 +41,7 @@ const AdminSchedule = () => {
                     <h1 className="text-center">Schedule</h1>
                 </div>
                 <div className="mb-3 d-flex gap-2 col-5">
+                    <h4 style={{display: "inline-block"}}>Search:</h4>
                     <input
                         type="text"
                         className="form-control"

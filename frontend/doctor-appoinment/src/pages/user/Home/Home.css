@@ -42,7 +42,9 @@
 .home__intro .button:hover {
     transform: scale(1.2);
     background-color: #1974d3;
-    color: #fff;
+    a {
+        color: #fff;
+    }
 }
 
 #about {
