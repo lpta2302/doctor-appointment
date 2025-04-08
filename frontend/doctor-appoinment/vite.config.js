@@ -52,6 +52,11 @@ export default defineConfig({
         changeOrigin: true,
         secure: false
       },
+      "/api/v1/patients": {
+        target: "http://localhost:8073",
+        changeOrigin: true,
+        secure: false
+      },
     }
   }
 })

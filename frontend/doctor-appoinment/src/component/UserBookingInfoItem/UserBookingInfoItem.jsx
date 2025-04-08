@@ -1,18 +1,16 @@
 import "./UserBookingInfoItem.css";
 
-const UserBookingInfoItem = () => {
+const UserBookingInfoItem = ({ appointment }) => {
     return (
-        <>
-            <div className="user-booking-info">
-                <h4 className="specialization">Tai - Mũi - Họng</h4>
-                <p className="clinic">Phòng khám: Phòng khám A</p>
-                <p className="date">Ngày khám: 07-04-2025</p>
-                <p className="time">Giờ khám: 09:00 ~ 09:30</p>
-                <p className="status pending">Trạng thái: Đang chờ</p>
-                <button className="cancel-btn">Huỷ lịch</button>
-            </div>
-        </>
-    )
-}
+        <div className="user-booking-info">
+            <h4 className="specialization">{appointment.specializationName}</h4>
+            <p className="clinic">Phòng khám: {appointment.clinicName}</p>
+            <p className="date">Ngày khám: {appointment.appointmentDate}</p>
+            <p className="time">Giờ khám: {appointment.appointmentTime}</p>
+            <p className={`status ${appointment.status.toLowerCase()}`}>Trạng thái: {appointment.status}</p>
+            <button className="cancel-btn">Huỷ lịch</button>
+        </div>
+    );
+};
 
 export default UserBookingInfoItem;
