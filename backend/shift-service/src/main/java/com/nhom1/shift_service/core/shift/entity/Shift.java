@@ -1,6 +1,5 @@
 package com.nhom1.shift_service.core.shift.entity;
 
-import static jakarta.persistence.CascadeType.ALL;
 import java.time.LocalTime;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nhom1.shift_service.core.schedule.entity.Schedule;
