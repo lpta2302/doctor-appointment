@@ -20,8 +20,10 @@ A simple microservices application for booking clinic appointments with doctor a
 
 ---
 
-* Note: Make sure Docker is running and the following ports are available: 
-* 8888, 8761, 8222, 8070, 8071, 8072, 8073, 5432, 9092, 5174. 
+* Note:
+- Make sure Docker is running  
+- Have maven and jdk21
+- the following ports are available: 8888, 8761, 8222, 8070, 8071, 8072, 8073, 5432, 9092, 5174. 
 
 ---
 
