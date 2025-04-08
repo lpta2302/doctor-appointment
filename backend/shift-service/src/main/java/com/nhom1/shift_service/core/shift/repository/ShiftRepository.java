@@ -19,6 +19,7 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
     List<Shift> findAllBySchedules(List<Schedule> schedules);
 
     void deleteByDoctorId(Long id);
+    List<Shift> findAllByDoctorId(Long id);
 
     @Modifying
     @Query("""

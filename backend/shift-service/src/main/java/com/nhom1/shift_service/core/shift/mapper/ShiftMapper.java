@@ -1,8 +1,11 @@
 package com.nhom1.shift_service.core.shift.mapper;
 
+import java.time.LocalTime;
+import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import com.nhom1.shift_service.core.doctor.dto.DoctorResponse;
+import com.nhom1.shift_service.core.schedule.entity.Schedule;
 import com.nhom1.shift_service.core.shift.dto.ShiftRequest;
 import com.nhom1.shift_service.core.shift.dto.ShiftResponse;
 import com.nhom1.shift_service.core.shift.entity.Shift;
@@ -30,11 +33,12 @@ public class ShiftMapper {
             .build();
     }
 
-    public ShiftInfo convertShiftInfoFrom(Shift updatingShift) {
+    public ShiftInfo convertShiftInfoFrom(Shift updatingShift, Schedule schedule, Map<LocalTime, LocalTime> shiftTime) {
         return ShiftInfo.builder()
             .id(updatingShift.getId())
-            .startTime(updatingShift.getStartTime())
-            .endTime(updatingShift.getEndTime())
+            .clinicId(schedule.getScheduleId().getClinicId())
+            .appliedDate(schedule.getScheduleId().getAppliedDate())
+            .shiftTime(shiftTime)
             .build();
     }
 }

@@ -1,4 +1,4 @@
-package com.nhom1.shift_service.kafka.shift;
+package com.nhom1.appointment_service.kafka.schedule;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -11,5 +11,4 @@ public record ShiftInfo(
     Long clinicId,
     LocalDate appliedDate,
     Map<LocalTime, LocalTime> shiftTime
-) {
-}
+) {}

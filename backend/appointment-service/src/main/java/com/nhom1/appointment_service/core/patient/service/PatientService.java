@@ -1,7 +1,14 @@
 package com.nhom1.appointment_service.core.patient.service;
 
+import static com.nhom1.appointment_service.common.StringCustomizer.APPROXIMATE_COMPARATOR.BOTH;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import com.nhom1.appointment_service.common.PageResponse;
+import com.nhom1.appointment_service.common.StringCustomizer;
+import com.nhom1.appointment_service.core.patient.dto.PatientRequest;
+import com.nhom1.appointment_service.core.patient.dto.PatientResponse;
 import com.nhom1.appointment_service.core.patient.entity.Patient;
+import com.nhom1.appointment_service.core.patient.mapper.PatientMapper;
 import com.nhom1.appointment_service.core.patient.repository.PatientRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -10,41 +17,41 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PatientService {
 
+    private final PatientMapper patientMapper;
+
     private final PatientRepository patientRepository;
 
-    public Patient create(Patient patient){
-        return patientRepository.save(patient);
-    }
-
-    public Long updatePatient(Long patientId ,Patient patient){
-        Patient updatingPatient = findById(patientId);
-
-        updatingPatient.setFullname(patient.getFullname());
-        updatingPatient.setDateOfBirth(patient.getDateOfBirth());
-        updatingPatient.setGender(patient.getGender());
-        updatingPatient.setPhoneNumber(patient.getPhoneNumber());
-        updatingPatient.setAddress(patient.getAddress());
-
-        return patientRepository.save(patient).getId();
+    public Patient create(PatientRequest request){
+        return patientRepository.save(patientMapper.convertToPatientFrom(request));
     }
 
     public Patient save(Patient patient){
         return patientRepository.save(patient);
     }
 
-    public Patient findById(Long id){
-        return patientRepository.findById(id)
-            .orElseThrow(()->new EntityNotFoundException(
-                "not found patient with id: "+id));
+    public void deleteById(String phoneNumber, String fullname){
+        patientRepository.deleteByPhoneNumberAndFullname(phoneNumber, fullname);
     }
 
-    public Patient findByPhoneNumber(String phoneNumber){
-        return patientRepository.findByPhoneNumber(phoneNumber)
-            .orElseThrow(()->new EntityNotFoundException(
-                "not found patient with phone number: "+phoneNumber));
+    public PatientResponse findPatientDetailByPhoneNumberAndFullname(String phoneNumber, String fullname) {
+        return patientMapper.convertToPatientResponseFrom(
+            patientRepository.findByPhoneNumberAndFullname(phoneNumber, StringCustomizer.convertApproximateCompare(fullname, BOTH))
+            .orElseThrow(()->new EntityNotFoundException("not found patient"))
+        );
     }
 
-    public void deleteById(Long id){
-        patientRepository.deleteById(id);
+    public Patient findByPhoneNumberAndFullname(String phoneNumber, String fullname) {
+        return patientRepository.findByPhoneNumberAndFullname(phoneNumber, StringCustomizer.convertApproximateCompare(fullname, BOTH))
+        .orElseThrow(()->new EntityNotFoundException("not found patient"));
     }
+
+    public PageResponse<PatientResponse> search(String phoneNumber, String fullname, Pageable pageable) {
+        var pageResult = 
+            patientRepository.search(phoneNumber, StringCustomizer.convertApproximateCompare(fullname, BOTH), pageable);
+        return PageResponse.fromPage(
+            pageResult, 
+            pageResult.map(patientMapper::convertToPatientResponseFrom).toList()
+        );
+    }
+
 }

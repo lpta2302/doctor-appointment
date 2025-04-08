@@ -12,6 +12,7 @@ import com.nhom1.appointment_service.core.appointment.dto.AppointmentRequest;
 import com.nhom1.appointment_service.core.appointment.dto.AvailableTime;
 import com.nhom1.appointment_service.core.appointment.entity.Appointment;
 import com.nhom1.appointment_service.core.appointment.repository.AppointmentRepository;
+import com.nhom1.appointment_service.core.patient.dto.PatientRequest;
 import com.nhom1.appointment_service.core.patient.entity.Patient;
 import com.nhom1.appointment_service.core.patient.service.PatientService;
 import com.nhom1.appointment_service.core.schedule.client.ScheduleClient;
@@ -32,12 +33,8 @@ public class AppointmentService {
     private final PatientService patientService;
 
     public Long create(AppointmentRequest request){
-        Patient patient = request.patient();
-        
-        if (request.isOldPatient()) {
-            patient = 
-                patientService.findByPhoneNumber(request.patient().getPhoneNumber());
-        }
+        PatientRequest patientRequest = request.patient();
+        Patient patient;
 
         ScheduleResponse scheduleResponse = 
             scheduleClient.findScheduleTimeById(request.clinicId(), request.appointmentDate().toString())
@@ -65,11 +62,19 @@ public class AppointmentService {
             .build();
 
         appointment = appointmentRepository.save(appointment);
+
+        if (request.isOldPatient()) {
+            patient = 
+                patientService.findByPhoneNumberAndFullname(
+                    request.patient().phoneNumber(), 
+                    request.patient().fullname());
+        } else {
+            patient = patientService.create(patientRequest);
+        }
         
         patient.addAppointment(appointment);
         patientService.save(patient);
         
-
         return appointment.getId();
     }
 
@@ -105,7 +110,6 @@ public class AppointmentService {
         return availableTimes;
     }
     
-
     public void validateAppointmentTime(
         Long clinicId,
         LocalDate appliedDate,
