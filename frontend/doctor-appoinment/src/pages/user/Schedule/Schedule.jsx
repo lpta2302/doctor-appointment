@@ -68,9 +68,9 @@ export default function Schedule() {
 
                 {patientAppointments.length > 0 && scheduleData.length === 0 && (
                     <div className="col-12 text-center mt-3 mb-5 content">
-                        <div className="row justify-content-around">
+                        <div className="row justify-content-left">
                             {patientAppointments.map((appointment, index) => (
-                                <div className="col" key={index}>
+                                <div className="col-3" key={index}>
                                     <UserBookingInfoItem appointment={appointment} />
                                 </div>
                             ))}

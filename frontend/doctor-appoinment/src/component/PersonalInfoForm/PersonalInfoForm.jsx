@@ -1,4 +1,4 @@
-const PersonalInfoForm = ({ handlePatientChange, patient, goNext }) => {
+const PersonalInfoForm = ({ handlePatientChange, patient, goNext, isOldPatient, handleOldPatientChange }) => {
     return (
         <form action="" className="row">
             <div className="col-lg-6">
@@ -81,6 +81,16 @@ const PersonalInfoForm = ({ handlePatientChange, patient, goNext }) => {
                         name="description"
                     />
                 </div>
+            </div>
+
+            <div className="my-1 mx-2">
+                <label className="form-label"></label>
+                <input
+                    type="checkbox"
+                    checked={isOldPatient}
+                    onChange={handleOldPatientChange}
+                />{" "}
+                Tôi đã từng sử dụng dịch vụ
             </div>
 
             <button type="button" className="btn-submit m-3" onClick={goNext}>

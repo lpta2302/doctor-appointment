@@ -8,7 +8,7 @@ const UserBookingInfoItem = ({ appointment }) => {
             <p className="date">Ngày khám: {appointment.appointmentDate}</p>
             <p className="time">Giờ khám: {appointment.appointmentTime}</p>
             <p className={`status ${appointment.status.toLowerCase()}`}>Trạng thái: {appointment.status}</p>
-            <button className="cancel-btn">Huỷ lịch</button>
+            {/* <button className="cancel-btn">Huỷ lịch</button> */}
         </div>
     );
 };

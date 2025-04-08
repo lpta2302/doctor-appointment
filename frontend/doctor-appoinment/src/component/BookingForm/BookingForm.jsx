@@ -34,7 +34,7 @@ export default function BookingForm() {
 
             if (countdown === 0) {
                 clearInterval(interval);
-                navigate("/"); // chuyển về trang home
+                navigate("/");
             }
 
             return () => clearInterval(interval);
@@ -46,6 +46,16 @@ export default function BookingForm() {
         setPatient((prev) => ({
             ...prev,
             [name]: value,
+        }));
+    };
+
+    const handleOldPatientChange = (e) => {
+        const isChecked = e.target.checked;
+        setFormData((prev) => ({
+            form: {
+                ...prev.form,
+                isOldPatient: isChecked,
+            }
         }));
     };
 
@@ -79,15 +89,15 @@ export default function BookingForm() {
         }));
     };
 
-    useEffect(() => {
-        if (step === 3) {
-            const timer = setTimeout(() => {
-                window.location.href = "/"; // hoặc navigate('/') nếu dùng react-router
-            }, 5000);
+    // useEffect(() => {
+    //     if (step === 3) {
+    //         const timer = setTimeout(() => {
+    //             window.location.href = "/";
+    //         }, 5000);
 
-            return () => clearTimeout(timer); // cleanup
-        }
-    }, [step]);
+    //         return () => clearTimeout(timer);
+    //     }
+    // }, [step]);
 
     return (
         <div className="container booking-form">
@@ -96,6 +106,8 @@ export default function BookingForm() {
                     handlePatientChange={handlePatientChange}
                     patient={patient}
                     goNext={goNext}
+                    isOldPatient={formData.form.isOldPatient}
+                    handleOldPatientChange={handleOldPatientChange}
                 />
             )}
 
@@ -112,7 +124,7 @@ export default function BookingForm() {
                 <div className="popup-success">
                     <h1>Đăng ký thành công !!!</h1>
                     <p>Sẽ quay về trang chủ sau {countdown} giây...</p>
-                    <button type="button" className="btn-submit m-3" onClick={() => {navigate("/");}}>
+                    <button type="button" className="btn-submit m-3" onClick={() => { navigate("/"); }}>
                         Back
                     </button>
                 </div>
