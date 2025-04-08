@@ -94,11 +94,10 @@ public class ScheduleService {
         Shift removingShift = schedule.getShifts().stream().filter(shift->shift.getId().equals(shiftId)).findFirst()
             .orElseThrow(()->new EntityNotFoundException("not found shift"));
 
-        shiftService.removeShift(removingShift);
 
         schedule.getShifts().remove(removingShift);
         ScheduleId id = scheduleRepository.save(schedule).getScheduleId();
-
+        shiftService.sendDeletedShiftMessage(schedule, removingShift);
         return id;
     }
 
@@ -148,8 +147,9 @@ public class ScheduleService {
     
     @Transactional
     public void deleteById(Long clinicId, LocalDate appliedDate){
-        scheduleRepository.deleteByClinicIdAndAppliedDate(clinicId, appliedDate);
-
+        Schedule schedule = findById(clinicId, appliedDate);  
+        shiftService.deleteAllById(schedule.getShifts().stream().map(Shift::getId).toList());
+        
         scheduleProducer.sendDeletedScheduleMessage(
             ScheduleInfo.builder().appliedDate(appliedDate).clinicId(clinicId).build()
         );

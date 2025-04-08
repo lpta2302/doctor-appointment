@@ -1,7 +1,9 @@
 package com.nhom1.shift_service.core.shift.service;
 
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
@@ -117,6 +119,9 @@ public class ShiftService {
 
         List<Shift> shifts = schedule.getShifts();
         int iUpdatingShift = shifts.indexOf(updatingShift);
+        Map<LocalTime, LocalTime> shiftTime = new LinkedHashMap<>();
+        shiftTime.put(updatingShift.getStartTime(), updatingShift.getEndTime());
+        shiftTime.put(shiftRequest.startTime(), shiftRequest.endTime());
 
         updatingShift.setStartTime(shiftRequest.startTime());
         updatingShift.setEndTime(shiftRequest.endTime());
@@ -129,7 +134,7 @@ public class ShiftService {
             throw new IllegalArgumentException("Overlapping shift start at " + updatingShift.getStartTime());
         }
 
-        shiftProducer.sendUpdatedShiftMessage(shiftMapper.convertShiftInfoFrom(updatingShift));
+        shiftProducer.sendUpdatedShiftMessage(shiftMapper.convertShiftInfoFrom(updatingShift, schedule, shiftTime));
     }
 
     public List<ShiftResponse> findAllBySchedule(Schedule schedule) {
@@ -205,8 +210,11 @@ public class ShiftService {
         return lowerBound;
     }
 
-    public void removeShift(Shift removingShift) {
-        shiftProducer.sendDeletedShiftMessage(shiftMapper.convertShiftInfoFrom(removingShift));
+    public void sendDeletedShiftMessage(Schedule schedule ,Shift removingShift) {
+        shiftProducer.sendDeletedShiftMessage(shiftMapper.convertShiftInfoFrom(
+            removingShift, schedule, 
+            Map.of(removingShift.getStartTime(), removingShift.getEndTime())
+        ));
     }
 
     private boolean isOverlappingShift(Shift s1, Shift s2) {
@@ -246,5 +254,9 @@ public class ShiftService {
                 .startTime(shift.getStartTime())
                 .build()
         ).toList();
+    }
+
+    public void deleteAllById(List<Long> ids) {
+        shiftRepository.deleteAllById(ids);
     }
 }

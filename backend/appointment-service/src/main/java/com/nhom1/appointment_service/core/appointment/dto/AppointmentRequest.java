@@ -3,7 +3,7 @@ package com.nhom1.appointment_service.core.appointment.dto;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.nhom1.appointment_service.core.patient.entity.Patient;
+import com.nhom1.appointment_service.core.patient.dto.PatientRequest;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -24,5 +24,5 @@ public record AppointmentRequest(
     boolean isOldPatient,
 
     @Valid
-    Patient patient
+    PatientRequest patient
 ) {}
