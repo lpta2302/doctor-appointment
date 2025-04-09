@@ -5,9 +5,10 @@ echo "🏗️  Run Docker compose..."
 cd "../backend/bin"
 chmod +x build-and-run.sh
 ./build-and-run.sh
-cd ../
+cd ../../
+
 
 echo "🚀 Starting Frontend..."
-cd "../frontend/doctor-appoinment" 
+cd "frontend/doctor-appoinment" 
 npm install 
 npm run dev
