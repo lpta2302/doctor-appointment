@@ -102,12 +102,11 @@ const AdminClinic = () => {
         }
     
         try {
-            const response = await fetch("/api/v1/admin/clinics", {
+            const response = await fetch("/api/v1/admin/clinics/"+id, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json"
-                },
-                body: JSON.stringify([id]) // Chuyển id thành mảng [id]
+                }
             });
     
             if (!response.ok) {
@@ -116,7 +115,8 @@ const AdminClinic = () => {
     
             alert("Clinic deleted successfully!");
             fetchClinics(page, searchParams);
-        } catch (error) {
+        // eslint-disable-next-line no-unused-vars
+        } catch (e) {
             alert("Failed to delete clinic!");
         }
     };

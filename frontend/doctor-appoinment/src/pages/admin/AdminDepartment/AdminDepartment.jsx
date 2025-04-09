@@ -96,7 +96,7 @@ const AdminDepartment = () => {
         } catch (error) {
             console.alert("Cannot delete department !");
         }
-    }
+    }>
 
     useEffect(() => {
         getAllDepartment(page, searchTerm);
@@ -201,7 +201,7 @@ const AdminDepartment = () => {
                                                 <button className="btn btn-delete" onClick={() => { removeDepartment(department.id) }}><i className="fa-solid fa-trash"></i></button>
                                             </div>
                                             <div className="col-1 m-0 p-0">
-                                                <button className="btn btn-update" onClick={() => { setShowUpdateForm({ ...showUpdateForm, show: true }) }}><i className="fa-solid fa-pen-to-square"></i></button>
+                                                <button className="btn btn-update" onClick={() => { setShowUpdateForm({ ...showUpdateForm, show: true, id: department.id }) }}><i className="fa-solid fa-pen-to-square"></i></button>
                                             </div>
                                         </div>
                                     </td>

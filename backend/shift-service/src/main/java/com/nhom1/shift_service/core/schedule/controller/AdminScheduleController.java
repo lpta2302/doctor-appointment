@@ -14,6 +14,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,8 +35,8 @@ public class AdminScheduleController {
 
     @PostMapping("/{clinicId}/{appliedDate}/shifts")
     public ResponseEntity<Long> addShift(
-        Long clinicId,
-        LocalDate appliedDate,
+        @PathVariable Long clinicId,
+        @PathVariable LocalDate appliedDate,
         @RequestBody @Valid ShiftRequest shiftRequest
     ) { 
         return ResponseEntity.ok(scheduleService.addShift(clinicId, appliedDate, shiftRequest));
@@ -43,9 +44,9 @@ public class AdminScheduleController {
 
     @PatchMapping("/{clinicId}/{appliedDate}/shifts/{shiftId}")
     public ResponseEntity<Long> updateShift(
-        Long clinicId,
-        LocalDate appliedDate,
-        Long shiftId,
+        @PathVariable Long clinicId,
+        @PathVariable LocalDate appliedDate,
+        @PathVariable Long shiftId,
         @RequestBody @Valid ShiftRequest shiftRequest
     ) { 
         return ResponseEntity.ok(
@@ -55,9 +56,9 @@ public class AdminScheduleController {
 
     @DeleteMapping("/{clinicId}/{appliedDate}/shifts/{shiftId}")
     public ResponseEntity<Void> removeShift(
-        Long clinicId,
-        LocalDate appliedDate,
-        Long shiftId
+        @PathVariable Long clinicId,
+        @PathVariable LocalDate appliedDate,
+        @PathVariable Long shiftId
     ) { 
         scheduleService.removeShift(clinicId, appliedDate, shiftId);
         return ResponseEntity.noContent().build();
@@ -65,24 +66,24 @@ public class AdminScheduleController {
     
     @GetMapping("/{clinicId}/{appliedDate}")
     public ResponseEntity<ScheduleResponse> findById(
-        Long clinicId,
-        LocalDate appliedDate
+        @PathVariable Long clinicId,
+        @PathVariable LocalDate appliedDate
     ) {
         return ResponseEntity.ok(scheduleService.findScheduleWithShiftDetailById(clinicId,appliedDate));
     }
 
     @GetMapping("/{appliedDate}/specializations/{specializationId}")
     public ResponseEntity<List<ScheduleResponse>> findBySpecialization(
-        Long specializationId,
-        LocalDate appliedDate
+        @PathVariable Long specializationId,
+        @PathVariable LocalDate appliedDate
     ) {
         return ResponseEntity.ok(scheduleService.findScheduleWithShiftDetailBySpecialization(specializationId,appliedDate));
     }
     
     @DeleteMapping("/{clinicId}/{appliedDate}")
     public ResponseEntity<Void> deleteById(
-        Long clinicId,
-        LocalDate appliedDate
+        @PathVariable Long clinicId,
+        @PathVariable LocalDate appliedDate
     ){
         scheduleService.deleteById(clinicId, appliedDate);
 

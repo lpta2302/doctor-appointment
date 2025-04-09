@@ -72,6 +72,7 @@ public class ScheduleService {
         return newShift.getId();
     }
 
+    @Transactional
     public Long updateShift(Long clinicId, LocalDate appliedDate, Long shiftId, ShiftRequest shiftRequest){
         Schedule schedule = findById(clinicId, appliedDate);
 
@@ -88,6 +89,7 @@ public class ScheduleService {
         return updatingShift.getId();
     }
     
+    @Transactional
     public ScheduleId removeShift(Long clinicId, LocalDate appliedDate, Long shiftId){
         Schedule schedule = findById(clinicId, appliedDate);
 

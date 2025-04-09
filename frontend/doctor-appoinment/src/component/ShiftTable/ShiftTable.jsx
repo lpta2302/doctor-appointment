@@ -22,7 +22,10 @@ const ShiftTable = ({ schedules, error }) => {
 
     const addShift = async () => {
         try {
-            const response = await fetch(`/api/v1/admin/schedules/{shift.clinicId}/{shift.appliedDate}/shifts?clinicId=${shift.clinicId}&appliedDate=${shift.appliedDate}`, {
+            alert(shift.doctorId, shift.endTime, shift.startTime);
+            
+            
+            const response = await fetch(`/api/v1/admin/schedules/${shift.clinicId}/${shift.appliedDate}/shifts`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -33,7 +36,7 @@ const ShiftTable = ({ schedules, error }) => {
                     endTime: shift.endTime
                 }),
             });
-
+            
             if (response.ok) {
                 alert("Add Shift Success");
                 setShowShiftForm(false);
@@ -59,7 +62,7 @@ const ShiftTable = ({ schedules, error }) => {
 
             {showShiftForm && (
                 <form className="modal-overlay" onSubmit={addShift}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                    <div className="modal-content">
                         <button type="button" className="modal-close" onClick={() => setShowShiftForm(false)}>&times;</button>
                         <h3>Add Shift</h3>
 

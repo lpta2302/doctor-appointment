@@ -24,6 +24,7 @@ import com.nhom1.shift_service.core.shift.repository.ShiftRepository;
 import com.nhom1.shift_service.kafka.shift.ShiftProducer;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -69,6 +70,7 @@ public class ShiftService {
         return newShifts.stream().toList();
     }
 
+    @Transactional
     public Shift addShift(Schedule schedule, ShiftRequest shiftRequest) {
         validateShift(shiftRequest);
         DoctorResponse doctorResponse = doctorClient.findById(shiftRequest.doctorId())

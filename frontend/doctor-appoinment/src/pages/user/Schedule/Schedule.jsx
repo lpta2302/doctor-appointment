@@ -10,6 +10,7 @@ export default function Schedule() {
     const [appliedDate, setAppliedDate] = useState("");
     const [specializationId, setSpecializationId] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
+    const [fullname, setFullname] = useState("");
     const [patientAppointments, setPatientAppointments] = useState([]);
 
     useEffect(() => {
@@ -43,7 +44,7 @@ export default function Schedule() {
     const handleSearchBooking = async () => {
         setScheduleData([]);
         try {
-            const response = await fetch(`/api/v1/patients/${phoneNumber}`);
+            const response = await fetch(`/api/v1/patients/${phoneNumber}/${fullname}`);
             if (!response.ok) throw new Error("Failed to get patient appointments !");
             const data = await response.json();
             setPatientAppointments(data.appointments || []);
@@ -111,6 +112,13 @@ export default function Schedule() {
                                 placeholder="Phone Number"
                                 value={phoneNumber}
                                 onChange={(e) => setPhoneNumber(e.target.value)}
+                            />
+                            <input
+                                name="fullname"
+                                className="form-control mt-3 mb-3"
+                                placeholder="Fullname"
+                                value={fullname}
+                                onChange={(e) => setFullname(e.target.value)}
                             />
                             <button className="btn btn-success" onClick={handleSearchBooking}>Submit</button>
                         </div>
