@@ -1,7 +1,9 @@
 package com.nhom1.shift_service.core.shift.service;
 
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
@@ -117,6 +119,9 @@ public class ShiftService {
 
         List<Shift> shifts = schedule.getShifts();
         int iUpdatingShift = shifts.indexOf(updatingShift);
+        Map<LocalTime, LocalTime> shiftTime = new LinkedHashMap<>();
+        shiftTime.put(updatingShift.getStartTime(), updatingShift.getEndTime());
+        shiftTime.put(shiftRequest.startTime(), shiftRequest.endTime());
 
         updatingShift.setStartTime(shiftRequest.startTime());
         updatingShift.setEndTime(shiftRequest.endTime());
@@ -129,7 +134,7 @@ public class ShiftService {
             throw new IllegalArgumentException("Overlapping shift start at " + updatingShift.getStartTime());
         }
 
-        shiftProducer.sendUpdatedShiftMessage(shiftMapper.convertShiftInfoFrom(updatingShift));
+        shiftProducer.sendUpdatedShiftMessage(shiftMapper.convertShiftInfoFrom(updatingShift, schedule, shiftTime));
     }
 
     public List<ShiftResponse> findAllBySchedule(Schedule schedule) {
@@ -197,20 +202,26 @@ public class ShiftService {
                 iLeft = iMid + 1;
             } else if (currentShift.getStartTime().isAfter(targetShift.getStartTime())) {
                 iRight = iMid - 1;
-            } 
+            } else {
+                return iMid;
+            }
         }
 
         return lowerBound;
     }
 
-    public void removeShift(Shift removingShift) {
-        shiftProducer.sendDeletedShiftMessage(shiftMapper.convertShiftInfoFrom(removingShift));
+    public void sendDeletedShiftMessage(Schedule schedule ,Shift removingShift) {
+        shiftProducer.sendDeletedShiftMessage(shiftMapper.convertShiftInfoFrom(
+            removingShift, schedule, 
+            Map.of(removingShift.getStartTime(), removingShift.getEndTime())
+        ));
     }
 
-    private boolean isOverlappingShift(Shift shift1, Shift shift2){
-        return shift1.getStartTime().isBefore(shift2.getEndTime()) &&
-            shift1.getEndTime().isAfter(shift2.getStartTime());
+    private boolean isOverlappingShift(Shift s1, Shift s2) {
+        return !(s1.getEndTime().compareTo(s2.getStartTime()) <= 0 || 
+                 s1.getStartTime().compareTo(s2.getEndTime()) >= 0);
     }
+    
 
     public void validateShift(ShiftRequest shift){
         if (shift.startTime().isAfter(shift.endTime())) {
@@ -243,5 +254,9 @@ public class ShiftService {
                 .startTime(shift.getStartTime())
                 .build()
         ).toList();
+    }
+
+    public void deleteAllById(List<Long> ids) {
+        shiftRepository.deleteAllById(ids);
     }
 }

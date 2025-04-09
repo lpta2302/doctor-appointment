@@ -72,10 +72,10 @@ public class SpecializationService {
             doctor->doctor.getSpecializations().clear()
         );
 
+        specializationRepository.deleteById(specializationId);
         specializationProducer.sendDeletedSpecializationMessage(
             new SpecializationInfo(specializationId, specialization.getName())
         );
-        specializationRepository.deleteById(specializationId);
     }
 
     public void deleteAllById(List<Long> specializationIds) {

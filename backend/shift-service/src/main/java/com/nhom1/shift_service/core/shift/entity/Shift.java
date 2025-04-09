@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
@@ -52,7 +54,11 @@ public class Shift {
     @NotNull
     private LocalTime endTime;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumns({
+        @JoinColumn(name = "schedule_clinic_id", referencedColumnName = "clinicId"),
+        @JoinColumn(name = "schedule_applied_date", referencedColumnName = "appliedDate")
+    })
     private Schedule schedule;
 }

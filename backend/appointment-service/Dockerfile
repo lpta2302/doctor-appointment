@@ -1,4 +1,5 @@
 FROM openjdk:21-jdk
+ENV TZ=Asia/Ho_Chi_Minh
 
 WORKDIR /app
 

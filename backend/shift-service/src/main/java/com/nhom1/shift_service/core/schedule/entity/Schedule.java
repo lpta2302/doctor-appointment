@@ -1,7 +1,8 @@
 package com.nhom1.shift_service.core.schedule.entity;
 
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
-import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.CascadeType.PERSIST;
+import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.FetchType.EAGER;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -51,7 +52,7 @@ public class Schedule {
     @Size(min=1, max=200, message="specialization name has 1-200 characters")
     private String specializationName;
 
-    @OneToMany(mappedBy = "schedule", cascade = ALL, orphanRemoval = true, fetch = EAGER)
+    @OneToMany(mappedBy = "schedule", cascade = {REMOVE, PERSIST}, orphanRemoval = true, fetch = EAGER)
     @OrderBy("startTime ASC")
     private List<Shift> shifts;
 

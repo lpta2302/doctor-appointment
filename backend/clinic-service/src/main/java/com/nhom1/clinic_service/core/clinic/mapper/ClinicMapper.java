@@ -22,6 +22,7 @@ public class ClinicMapper {
 
     public ClinicInfo convertClinicInfoFrom(Clinic clinic) {
         return ClinicInfo.builder()
+            .id(clinic.getId())
             .code(clinic.getCode())
             .name(clinic.getName())
             .specializationId(clinic.getSpecializationId())
