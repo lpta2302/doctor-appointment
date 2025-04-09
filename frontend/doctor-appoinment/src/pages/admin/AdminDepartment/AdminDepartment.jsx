@@ -96,7 +96,7 @@ const AdminDepartment = () => {
         } catch (error) {
             console.alert("Cannot delete department !");
         }
-    }>
+    }
 
     useEffect(() => {
         getAllDepartment(page, searchTerm);
