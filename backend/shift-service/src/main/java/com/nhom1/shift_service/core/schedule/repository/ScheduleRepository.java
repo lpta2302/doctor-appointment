@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -52,6 +53,14 @@ public interface ScheduleRepository extends JpaRepository<Schedule, ScheduleId> 
       @Modifying
       @Query("DELETE FROM Schedule s WHERE s.scheduleId.clinicId = :clinicId AND s.scheduleId.appliedDate = :appliedDate")
       void deleteByClinicIdAndAppliedDate(Long clinicId, LocalDate appliedDate);
+
+      @Query("""
+               select s
+               from Schedule s   
+               where s.scheduleId.clinicId = :id
+            """)
+      @EntityGraph("shifts")
+      List<Schedule> findAllByClinicId(Long id);
 
 
 }

@@ -16,6 +16,7 @@ import com.nhom1.clinic_service.core.specialization.client.SpecializationClient;
 import com.nhom1.clinic_service.core.specialization.dto.SpecializationResponse;
 import com.nhom1.clinic_service.kafka.clinic.ClinicProducer;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -41,6 +42,7 @@ public class ClinicService {
         return clinicRepository.save(clinic).getId();
     }
 
+    @Transactional
     public Long update(Long clinicId, Clinic clinic) {
         Clinic foundClinic = findById(clinicId);
             
@@ -148,6 +150,7 @@ public class ClinicService {
         return clinicRepository.findAllById(clinicIds);
     }
 
+    @Transactional
     public void deleteById(Long clinicId) {
         Clinic clinic = findById(clinicId);
         clinicRepository.deleteById(clinicId);

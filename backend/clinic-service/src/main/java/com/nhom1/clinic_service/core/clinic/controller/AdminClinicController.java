@@ -68,7 +68,7 @@ public class AdminClinicController {
         return ResponseEntity.ok(clinicService.searchAllWithSpecialization(code, name,specializationId ,pageable));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{clinicId}")
     public ResponseEntity<Void> delete(@PathVariable Long clinicId) {
         clinicService.deleteById(clinicId);
         return ResponseEntity.noContent().build();
