@@ -22,6 +22,8 @@ const ShiftTable = ({ schedules, error }) => {
 
     const addShift = async () => {
         try {
+            console.log(shift);
+            
             const response = await fetch(`/api/v1/admin/schedules/${shift.clinicId}/${shift.appliedDate}/shifts`, {
                 method: "POST",
                 headers: {
