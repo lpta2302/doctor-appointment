@@ -3,9 +3,9 @@ import { useState, useEffect } from "react";
 const ShiftTable = ({ schedules, error }) => {
     const [showShiftForm, setShowShiftForm] = useState(false);
     const [shift, setShift] = useState({
-        clinicId: schedules[0]?.clinicId || "",
-        appliedDate: schedules[0]?.appliedDate || "",
-        doctorId: 0,
+        clinicId: "",
+        appliedDate: "",
+        doctorId: null,
         startTime: "12:00",
         endTime: "12:00"
     });
@@ -20,7 +20,10 @@ const ShiftTable = ({ schedules, error }) => {
         }
     }, [schedules]);
 
-    const addShift = async () => {
+    console.log(shift);
+
+    const addShift = async (e) => {
+        e.preventDefault();
         try {
             const response = await fetch(`/api/v1/admin/schedules/{shift.clinicId}/{shift.appliedDate}/shifts?clinicId=${shift.clinicId}&appliedDate=${shift.appliedDate}`, {
                 method: "POST",
@@ -34,20 +37,20 @@ const ShiftTable = ({ schedules, error }) => {
                 }),
             });
 
-            if (response.ok) {
-                alert("Add Shift Success");
-                setShowShiftForm(false);
-                setShift({
-                    ...shift,
-                    doctorId: 0,
-                    startTime: "12:00",
-                    endTime: "12:00"
-                });
-            } else {
-                alert("Add Shift Failed");
+            if (!response.ok) {
+                throw new Error("Add Shift Failed");
+
             }
+            alert("Add Shift Success");
+            setShowShiftForm(false);
+            setShift({
+                ...shift,
+                doctorId: 0,
+                startTime: "12:00",
+                endTime: "12:00"
+            });
         } catch (error) {
-            console.error(error);
+            console.error("error:", error);
         }
     };
 
